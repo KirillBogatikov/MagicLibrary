@@ -19,7 +19,7 @@ package org.kllbff.magiclibrary.geometry;
  * @since 1.0
  */
 public class StraightLine {
-	private Point first, second;
+	protected Point first, second;
 	
 	/**
 	 * Initializes line by two given points
@@ -204,14 +204,14 @@ public class StraightLine {
 	/**
 	 * Returns a string representation of the line segment, containing this vaertices current coordinates 
 	 * 
-	 * @return String representation of the form: <code>"Straight line from (" + {@link Point#getX()} + ", " + {@link Point#getY()} + ") to (" +  + {@link Point#getX()} + ", " + {@link Point#getY()} + ")"</code>
+	 * @return String representation of the form: <code>"Straight line at (" + {@link Point#getX()} + ", " + {@link Point#getY()} + ") and (" +  + {@link Point#getX()} + ", " + {@link Point#getY()} + ")"</code>
 	 */
 	@Override
 	public String toString() {
-		return "Straight line from (" + first.getX() + ", " + first.getY() + ") to (" + second.getX() + ", " + second.getY() + ")";
+		return "Straight line at (" + first.getX() + ", " + first.getY() + ") and (" + second.getX() + ", " + second.getY() + ")";
 	}
 	
-	private void checkPoints(Point a, Point b) {
+	protected void checkPoints(Point a, Point b) {
 		if(a == null || b == null) {
 			throw new NullPointerException("Point is null");
 		}		
