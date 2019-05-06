@@ -9,9 +9,9 @@ package org.kllbff.magiclibrary.geometry;
  * @since 1.0
  */
 public enum PointPosition {
-	INSIDE, OUTSIDE,
-	/* used only for lines */
-	LEFT, RIGHT, ABOVE, BELOW,
-	/* used only for shapes */
-	ON_BORDER, IN_VERTEX
+    INSIDE, OUTSIDE,
+    /* used only for lines */
+    LEFT, RIGHT, ABOVE, BELOW,
+    /* used only for shapes */
+    ON_BORDER, IN_VERTEX
 }
