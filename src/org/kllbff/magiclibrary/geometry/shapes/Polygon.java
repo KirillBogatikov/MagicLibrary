@@ -105,14 +105,26 @@ public class Polygon implements Shape {
 
     @Override
     public PointPosition getPointPosition(Point point) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean contains(Point point) {
-        // TODO Auto-generated method stub
-        return false;
+        LineSegment line;
+        List<Point> intersections;
+        for(Point v : vertices) {
+            if(point.equals(v)) {
+                return true;
+            }
+            
+            line = new LineSegment(point, v);
+            intersections = getIntersections(line);
+            
+            if(intersections.size() % 2 == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -130,8 +142,8 @@ public class Polygon implements Shape {
         for(int i = 1; i < vertices.size(); i++) {
             edge = new LineSegment(vertices.get(i), vertices.get(i - 1));
             point = edge.getIntersection(line);
-            
-            if(point != null) {
+
+            if(point != null && !points.contains(point)) {
                 points.add(point);
             }
         }
