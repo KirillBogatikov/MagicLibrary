@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.kllbff.magiclibrary.geometry.LineSegment;
 import org.kllbff.magiclibrary.geometry.Point;
 import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
@@ -99,8 +100,7 @@ public class Polygon implements Shape {
     
     @Override
     public Point[] getVertices() {
-        // TODO Auto-generated method stub
-        return null;
+        return vertices.toArray(new Point[0]);
     }
 
     @Override
@@ -122,15 +122,28 @@ public class Polygon implements Shape {
     }
 
     @Override
-    public Point getIntersection(StraightLine line) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Point> getIntersections(StraightLine line) {
+        ArrayList<Point> points = new ArrayList<>();
+        
+        LineSegment edge;
+        Point point;
+        for(int i = 1; i < vertices.size(); i++) {
+            edge = new LineSegment(vertices.get(i), vertices.get(i - 1));
+            point = edge.getIntersection(line);
+            
+            if(point != null) {
+                points.add(point);
+            }
+        }
+        
+        return points;
     }
 
     @Override
-    public Shape getIntersectionArea(Shape other) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Shape> getIntersectionAreas(Shape other) {
+        ArrayList<Shape> shapes = new ArrayList<>();
+        
+        return shapes;
     }
     
     public void update() {
