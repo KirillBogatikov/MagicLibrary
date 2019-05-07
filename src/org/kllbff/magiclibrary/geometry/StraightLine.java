@@ -146,7 +146,7 @@ public class StraightLine {
         double x = -((x1*y2-x2*y1)*(x4-x3)-(x3*y4-x4*y3)*(x2-x1))/((y1-y2)*(x4-x3)-(y3-y4)*(x2-x1));
         double y = (x - x1) / (x2 - x1) * (y2 - y1) + y1;
         
-        if(Double.isFinite(x) && Double.isFinite(y) && x != -0.0 && y != -0.0) {
+        if(Double.isFinite(x) && Double.isFinite(y)) {
             return new Point(x, y);
         }
         return null;
