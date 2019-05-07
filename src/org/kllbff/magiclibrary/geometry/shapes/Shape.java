@@ -1,5 +1,7 @@
 package org.kllbff.magiclibrary.geometry.shapes;
 
+import java.util.List;
+
 import org.kllbff.magiclibrary.geometry.Point;
 import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
@@ -53,20 +55,20 @@ public interface Shape {
     public boolean contains(Shape other);
     
     /**
-     * Implementor must returns a {@link Point} object, represents the point of intersection
+     * Implementor must returns a {@link java.util.List List} of {@link Point} objects, represents the points of intersection
      * 
      * @param line specified line
-     * @return intersection point
+     * @return intersection points list
      */
-    public Point getIntersection(StraightLine line);
+    public List<Point> getIntersections(StraightLine line);
     
     /**
-     * Implementor must returns a {@link Shape} object, represents an intersection area
+     * Implementor must returns a {@link java.util.List List} of {@link Shape} objects, represents an intersection areas
      * 
      * @param other specified shape
-     * @return a {@link Shape} object, represents an intersection area
+     * @return list of {@link Shape} objects, represents an intersection areas
      */
-    public Shape getIntersectionArea(Shape other);
+    public List<Shape> getIntersectionAreas(Shape other);
     
     /**
      * Checks if specified line and this shape have an intersection area
@@ -75,7 +77,7 @@ public interface Shape {
      * @return true if shape and line have an intersection area, false otherwise
      */
     public default boolean hasIntersection(StraightLine line) {
-        return getIntersection(line) != null;
+        return getIntersections(line).size() > 0;
     }
     
     /**
@@ -85,6 +87,6 @@ public interface Shape {
      * @return true if shapes have an intersection area, false otherwise
      */
     public default boolean hasIntersectionArea(Shape other) {
-        return getIntersectionArea(other) != null;
+        return getIntersectionAreas(other).size() > 0;
     }
 }
