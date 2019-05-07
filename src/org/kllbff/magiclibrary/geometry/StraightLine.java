@@ -208,7 +208,22 @@ public class StraightLine {
      */
     @Override
     public String toString() {
-        return "Straight line at (" + first.getX() + ", " + first.getY() + ") and (" + second.getX() + ", " + second.getY() + ")";
+        StringBuilder builder = new StringBuilder();
+        builder.append("StraightLine at (");
+        if(first == null) {
+            builder.append("unknown, unknown");
+        } else {
+            builder.append(first.getX()).append(", ").append(first.getY());
+        }
+        builder.append(") and (");
+        if(second == null) {
+            builder.append("unknown, unknown");
+        } else {
+            builder.append(second.getX()).append(", ").append(second.getY());
+        }
+        builder.append(")");
+        
+        return builder.toString();
     }
     
     protected void checkPoints(Point a, Point b) {

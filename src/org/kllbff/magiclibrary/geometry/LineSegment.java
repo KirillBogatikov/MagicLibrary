@@ -87,6 +87,21 @@ public class LineSegment extends StraightLine {
      */
     @Override
     public String toString() {
-        return "Line segment from (" + first.getX() + ", " + first.getY() + ") to (" + second.getX() + ", " + second.getY() + ")";
+        StringBuilder builder = new StringBuilder();
+        builder.append("LineSegment from (");
+        if(first == null) {
+            builder.append("unknown, unknown");
+        } else {
+            builder.append(first.getX()).append(", ").append(first.getY());
+        }
+        builder.append(") to (");
+        if(second == null) {
+            builder.append("unknown, unknown");
+        } else {
+            builder.append(second.getX()).append(", ").append(second.getY());
+        }
+        builder.append(")");
+        
+        return builder.toString();
     }
 }
