@@ -44,6 +44,26 @@ public class LineSegment extends StraightLine {
     public LineSegment(double x1, double y1, double x2, double y2) {
         this(new Point(x1, y1), new Point(x2, y2));
     }    
+    
+    /**
+     * Returns point of intersection this line with specified line or <code>null</code> if intersection does not exist
+     * 
+     * @param line specified line
+     * @return point of intersection this line with specified line
+     */
+    public Point getIntersection(StraightLine other) {
+        Point point = super.getIntersection(other);
+        
+        if(point == null) {
+            return point;
+        }
+        
+        if(getPointPosition(point) == PointPosition.INSIDE && other.getPointPosition(point) == PointPosition.INSIDE) {
+            return point;
+        }
+        
+        return null;
+    }
 
     /**
      * Returns one item from PointPosition, representing position of specified point on this shape<br>
