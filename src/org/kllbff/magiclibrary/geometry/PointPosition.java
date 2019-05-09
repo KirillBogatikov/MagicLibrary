@@ -1,7 +1,7 @@
 package org.kllbff.magiclibrary.geometry;
 
 /**
- * <h4>Represents position of some point on the shape</h4>
+ * <h3>Represents position of some point on the shape</h3>
  * <p>Any point can locates in shape, on it's border or outside 
  * 
  * @author Kirill Bogatikov

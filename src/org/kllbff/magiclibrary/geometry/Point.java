@@ -14,8 +14,7 @@ package org.kllbff.magiclibrary.geometry;
  *      <li>method for computing distance between two points</li>
  *      <li>method for computing distance between point and two coordinates</li>
  *      <li>method for comparing point and some other object (usually other point)</li>
- *  </ul>
- *  </p>
+ *  </ul></p>
  *  <p>Class implements {@link java.lang.Comparable} interface and allows using simple
  *     sorting methods on sequence of points</p> 
  * 
@@ -91,7 +90,7 @@ public class Point implements Comparable<Point> {
     /**
      * Compute distance between two points - this and given
      * 
-     * @param point, distance to which will be computed 
+     * @param other point, distance to which will be computed 
      * @return distance between two points - this and given
      */
     public double distanceTo(Point other) {

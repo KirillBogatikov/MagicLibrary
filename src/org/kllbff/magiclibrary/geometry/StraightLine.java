@@ -98,7 +98,7 @@ public class StraightLine {
      * Automatically save new point as "first" if it's closest to origin from two points, or 
      * as "second" if it's the most remote
      * 
-     * @param first any point lying on this line
+     * @param second any point lying on this line
      * @throws NullPointerException if any of points is null
      * @throws RuntimeException if points are equals
      */
@@ -129,8 +129,8 @@ public class StraightLine {
     /**
      * Returns point of intersection this line with specified line or <code>null</code> if intersection does not exist
      * 
-     * @param line specified line
-     * @return point of intersection this line with specified line
+     * @param other specified line
+     * @return other of intersection this line with specified line
      */
     public Point getIntersection(StraightLine other) {
         double x1 = this.first.getX();
@@ -169,6 +169,7 @@ public class StraightLine {
     /**
      * Checks if this shape contains specified point
      * 
+     * @param point specified for checking point
      * @return true if the point located on this line; false otherwise
      */
     public boolean contains(Point point) {

@@ -11,8 +11,7 @@ package org.kllbff.magiclibrary.geometry;
  *     <li>determining the presence of an intersection point</li>
  *     <li>detection point position about this line</li>
  *     <li>determining whether a point is contained on a straight line</li>
- * </ul>
- * </p>
+ * </ul></p>
  * 
  * @author Kirill Bogatikov
  * @version 1.0
@@ -48,7 +47,7 @@ public class LineSegment extends StraightLine {
     /**
      * Returns point of intersection this line with specified line or <code>null</code> if intersection does not exist
      * 
-     * @param line specified line
+     * @param other specified line
      * @return point of intersection this line with specified line
      */
     public Point getIntersection(StraightLine other) {
