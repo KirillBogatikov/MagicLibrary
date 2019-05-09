@@ -48,7 +48,7 @@ public interface Shape {
     
     /**
      * Checks if this shape contains specified shape
-     * It is believed that the shape A contains a shape B if all the vertices of the figure B lie inside the shape or on its borders
+     * <p>It is believed that the shape A contains a shape B if all the vertices of the figure B lie inside the shape or on its borders</p>
      * 
      * @param other specified Shape for checking
      * @return true if point inside or on the border of shape; false otherwise

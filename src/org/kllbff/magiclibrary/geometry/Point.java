@@ -126,11 +126,11 @@ public class Point implements Comparable<Point> {
     
     /**
      * Compares two points according using distance between every point and Origin point by the following rule:
-     * <ul>
+     * <p><ul>
      *     <li>if distance between this point and Origin greater than distance between specified point and Origin, returns positive integer</li>
      *  <li>if distance between this point and Origin less than distance between specified point and Origin, returns negative integer</li>
      *  <li>if distance between this point and Origin equals distance between specified point and Origin, returns zero</li>   
-     * </ul>
+     * </ul></p>
      * 
      * @param other the point to be compared
      * @return a negative integer, zero, or a positive integer as this point is less than, equal to, or greater than the specified point

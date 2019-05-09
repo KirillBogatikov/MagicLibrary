@@ -75,8 +75,8 @@ public class StraightLine {
     
     /**
      * Allows to change one of describing points
-     * Automatically save new point as "first" if it's closest to origin from two points, or 
-     * as "second" if it's the most remote
+     * <p>Automatically save new point as "first" if it's closest to origin from two points, or 
+     * as "second" if it's the most remote</p>
      * 
      * @param first any point lying on this line
      * @throws NullPointerException if any of points is null
@@ -95,8 +95,8 @@ public class StraightLine {
 
     /**
      * Allows to change one of describing points
-     * Automatically save new point as "first" if it's closest to origin from two points, or 
-     * as "second" if it's the most remote
+     * <p>Automatically save new point as "first" if it's closest to origin from two points, or 
+     * as "second" if it's the most remote</p>
      * 
      * @param second any point lying on this line
      * @throws NullPointerException if any of points is null
@@ -115,7 +115,7 @@ public class StraightLine {
     
     /**
      * Returns an angle between this line and positive x-axis, in radians
-     * Calculated as <code>k = arctan(-a / b)</code>, where a and b - coefficients of the coordinates in th equation of the line
+     * <p>Calculated as <code>k = arctan(-a / b)</code>, where a and b - coefficients of the coordinates in th equation of the line</p>
      * 
      * @return an angle between this line and positive x-axis, in radians
      */
@@ -182,7 +182,7 @@ public class StraightLine {
 
     /**
      * Returns one item from PointPosition, representing position of specified point on this shape<br>
-     * Can return:
+     * <p>Can return:
      * <dl>
      *     <dt>INSIDE</dt>
      *     <dd>If this line contians specified point</dd>
@@ -190,7 +190,7 @@ public class StraightLine {
      *     <dd>If specified point lies in the upper half-plane with respect to the line</dd>
      *  <dt>BELOW</dt>
      *  <dd>If specified point lies in the lower half-plane with respect to the line</dd>
-     * </dl>  
+     * </dl></p>  
      * 
      * @param point specified Point for checking
      * @return one of enum PointPosition
