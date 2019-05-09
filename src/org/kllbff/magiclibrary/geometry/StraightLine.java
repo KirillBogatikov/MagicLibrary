@@ -144,8 +144,12 @@ public class StraightLine {
         double y4 = other.second.getY();
         
         double x = -((x1*y2-x2*y1)*(x4-x3)-(x3*y4-x4*y3)*(x2-x1))/((y1-y2)*(x4-x3)-(y3-y4)*(x2-x1));
-        double y = (x - x1) / (x2 - x1) * (y2 - y1) + y1;
+        double y = ((y3-y4)*(-x)-(x3*y4-x4*y3))/(x4-x3);
         
+        if(Double.isNaN(y)) {
+            y = ((y1-y2)*(-x)-(x1*y2-x2*y1))/(x2-x1);
+        }
+                
         if(Double.isFinite(x) && Double.isFinite(y)) {
             return new Point(x, y);
         }
@@ -195,10 +199,7 @@ public class StraightLine {
             return PointPosition.INSIDE;
         }
         
-        if(point.getY() > Math.min(first.getY(), second.getY()))
-            return PointPosition.ABOVE;
-        
-        return PointPosition.BELOW;
+        return PointPosition.OUTSIDE;
     }
     
     /**

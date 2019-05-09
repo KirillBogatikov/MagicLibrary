@@ -58,7 +58,7 @@ public class LineSegment extends StraightLine {
             return point;
         }
         
-        if(getPointPosition(point) == PointPosition.INSIDE && other.getPointPosition(point) == PointPosition.INSIDE) {
+        if(!isOutside(point) && other.getPointPosition(point) == PointPosition.INSIDE) {
             return point;
         }
         
@@ -86,18 +86,17 @@ public class LineSegment extends StraightLine {
      */
     public PointPosition getPointPosition(Point point) {
         PointPosition position = super.getPointPosition(point);
+        
         if(position == PointPosition.INSIDE) {
-            double x = Math.min(Math.abs(first.getX()), Math.abs(second.getX()));
-            if(Math.abs(point.getX()) < x) {
-                return PointPosition.LEFT;
-            }
-            
-            x = Math.max(Math.abs(first.getX()), Math.abs(second.getX()));
-            if(Math.abs(point.getX()) > x) {
-                return PointPosition.RIGHT;
-            }
+            return isOutside(point) ? PointPosition.OUTSIDE : position;
         }
         return position;
+    }
+    
+    private boolean isOutside(Point point) {
+        Point middle = new Point((first.getX() + second.getX()) / 2, (first.getY() + second.getY()) / 2);
+        double d = point.distanceTo(middle);
+        return d > first.distanceTo(middle);  
     }
     
     /**
