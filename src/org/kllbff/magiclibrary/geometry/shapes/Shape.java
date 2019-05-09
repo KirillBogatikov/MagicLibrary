@@ -2,6 +2,7 @@ package org.kllbff.magiclibrary.geometry.shapes;
 
 import java.util.List;
 
+import org.kllbff.magiclibrary.geometry.LineSegment;
 import org.kllbff.magiclibrary.geometry.Point;
 import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
@@ -30,10 +31,10 @@ public interface Shape {
     public Point[] getVertices();
     
     /**
-     * Implementor must returns one item from {@link #PointPosition}, representing position of specified point on this shape
+     * Implementor must returns one item from {@link PointPosition}, representing position of specified point on this shape
      * 
      * @param point specified {@link Point} for checking
-     * @return one of enum {@link #PointPosition}
+     * @return one of enum {@link PointPosition}
      */
     public PointPosition getPointPosition(Point point);
     
@@ -88,5 +89,20 @@ public interface Shape {
      */
     public default boolean hasIntersectionArea(Shape other) {
         return getIntersectionAreas(other).size() > 0;
+    }
+    
+    /**
+     * Returns an array of shape's edges, represented by LineSegment
+     * 
+     * @return an array of shape's edges
+     */
+    public default LineSegment[] getEdges() {
+        Point[] vertices = getVertices();
+        LineSegment[] edges = new LineSegment[vertices.length];
+        for(int i = 1; i < vertices.length; i++) {
+            edges[i - 1] = new LineSegment(vertices[i - 1], vertices[i]);
+        }
+        edges[vertices.length - 1] = new LineSegment(vertices[vertices.length - 1], vertices[0]);
+        return edges;
     }
 }
