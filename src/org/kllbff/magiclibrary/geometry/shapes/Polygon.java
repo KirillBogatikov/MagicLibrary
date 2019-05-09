@@ -120,7 +120,15 @@ public class Polygon implements Shape {
             line = new LineSegment(point, v);
             intersections = getIntersections(line);
             
-            if(intersections.size() % 2 == 0) {
+            int count = intersections.size();
+            for(int i = 0; i < intersections.size(); i++) {
+                if(i > 0 && vertices.indexOf(intersections.get(i)) != -1) {
+                    count++;
+                    break;
+                }
+            }
+            
+            if(count % 2 == 0) {
                 return false;
             }
         }
@@ -129,7 +137,16 @@ public class Polygon implements Shape {
 
     @Override
     public boolean contains(Shape other) {
-        // TODO Auto-generated method stub
+        Point[] vertices = other.getVertices();
+        
+        for(int i = 1; i < vertices.length; i++) {
+            if(!contains(vertices[i])) {
+                return false;
+            }
+        }
+        
+        
+        
         return false;
     }
 
@@ -139,10 +156,10 @@ public class Polygon implements Shape {
         
         LineSegment edge;
         Point point;
-        for(int i = 1; i < vertices.size(); i++) {
-            edge = new LineSegment(vertices.get(i), vertices.get(i - 1));
+        for(int i = 1; i <= vertices.size(); i++) {
+            edge = new LineSegment(vertices.get(i == vertices.size() ? 0 : i), vertices.get(i - 1));
             point = edge.getIntersection(line);
-
+            
             if(point != null && !points.contains(point)) {
                 points.add(point);
             }
