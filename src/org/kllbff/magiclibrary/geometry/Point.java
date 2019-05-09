@@ -42,9 +42,8 @@ public class Point implements Comparable<Point> {
      * @param y point's coordinate on the y-axis
      */
     public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
-        this.distanceToStart = distanceTo(0, 0);
+        setX(x);
+        setY(y);
     }
     
     /**
@@ -53,7 +52,7 @@ public class Point implements Comparable<Point> {
      * @return point's current coordinate on the x-axis 
      */
     public double getX() {
-        return Double.valueOf(String.format("%.15f", x).replace(",", "."));
+        return x;
     }
     
     /**
@@ -62,7 +61,7 @@ public class Point implements Comparable<Point> {
      * @return point's current coordinate on the y-axis 
      */
     public double getY() {
-        return Double.valueOf(String.format("%.15f", y).replace(",", "."));
+        return y;
     }
     
     /**
@@ -80,7 +79,7 @@ public class Point implements Comparable<Point> {
     /**
      * Change point's current coordinate on the y-axis to given value
      * 
-     * @param x point's y-axis position
+     * @param y point's y-axis position
      * @return reference to this object
      */
     public Point setY(double y) {
