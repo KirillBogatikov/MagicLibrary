@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.kllbff.magiclibrary.geometry.LineSegment;
 import org.kllbff.magiclibrary.geometry.Point;
-import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
 
 /**
@@ -26,7 +25,7 @@ import org.kllbff.magiclibrary.geometry.StraightLine;
  * @version 1.0
  * @since 1.0
  */
-public class Polygon implements Shape {
+public class Polygon extends Shape {
     private Comparator<Point> verticesComparator;
     private List<Point> vertices;
     private Point origin;
@@ -211,69 +210,6 @@ public class Polygon implements Shape {
     @Override
     public Point[] getVertices() {
         return vertices.toArray(new Point[0]);
-    }
-
-    /**
-     * Returns position of specified point on this shape
-     * <p>This method can return next values:
-     * <ul>
-     *      <li>{@link PointPosition#INSIDE} if point located inside the polygon;</li>
-     *      <li>{@link PointPosition#IN_VERTEX} if point equals polygon's vertex;</li>
-     *      <li>{@link PointPosition#OUTSIDE} if point located outside the polygon;</li>
-     *      <li>{@link PointPosition#ON_BORDER} if point located on polygon's edge;</li>
-     * </ul></p>
-     * <p>This method uses rays from specified point to each vertex. If at least one ray has even number of interceptions with polygon's edges
-     * it is believed that the point is outside</p>
-     * 
-     * @param point specified {@link Point} for checking
-     * @return one of enum {@link PointPosition}
-     */
-    @Override
-    public PointPosition getPointPosition(Point point) {
-        LineSegment[] edges = getEdges();
-        for(LineSegment edge : edges) {
-            if(edge.contains(point)) {
-                return PointPosition.ON_BORDER;
-            }
-        }
-        
-        LineSegment line;
-        List<Point> intersections;
-        
-        for(Point v : vertices) {
-            if(point.equals(v)) {
-                return PointPosition.IN_VERTEX;
-            }
-        
-            line = new LineSegment(point, v);
-            intersections = getIntersections(line);
-            
-            int count = intersections.size();
-            for(int i = 0; i < intersections.size(); i++) {
-                if(i > 0 && vertices.indexOf(intersections.get(i)) != -1) {
-                    count++;
-                    break;
-                }
-            }
-            
-            if(count % 2 == 0) {
-                return PointPosition.OUTSIDE;
-            }
-        }
-        
-        return PointPosition.INSIDE;
-    }
-
-    /**
-     * Returns true if point located inside the polygon, or at vertex or on edge
-     * 
-     * <p>This method uses {@link #getPointPosition(Point)}</p>
-     * 
-     * @return true if point inside or on the border of polygon; false otherwise
-     */
-    @Override
-    public boolean contains(Point point) {
-        return getPointPosition(point) != PointPosition.OUTSIDE;
     }
 
     /**

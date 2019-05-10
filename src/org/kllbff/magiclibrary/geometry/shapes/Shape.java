@@ -22,29 +22,82 @@ import org.kllbff.magiclibrary.geometry.StraightLine;
  * @version 1.0
  * @since 1.0
  */
-public interface Shape {
+public abstract class Shape {
     /**
      * Must returns array of shape's vertices
      * 
      * @return array of shape's vertices
      */
-    public Point[] getVertices();
+    public abstract Point[] getVertices();
     
     /**
-     * Implementor must returns one item from {@link PointPosition}, representing position of specified point on this shape
+     * Returns one item from {@link PointPosition}, representing position of specified point on this shape
      * 
      * @param point specified {@link Point} for checking
      * @return one of enum {@link PointPosition}
      */
-    public PointPosition getPointPosition(Point point);
+    public PointPosition getPointPosition(Point point) {
+        LineSegment[] edges = getEdges();
+        for(LineSegment edge : edges) {
+            if(edge.contains(point)) {
+                return PointPosition.ON_BORDER;
+            }
+        }
+        
+        LineSegment line;
+        List<Point> intersections;
+        Point[] vertices = getVertices();
+        
+        for(Point v : vertices) {
+            if(point.equals(v)) {
+                return PointPosition.IN_VERTEX;
+            }
+        
+            line = new LineSegment(point, v);
+            intersections = getIntersections(line);
+            
+            int count = intersections.size();
+            for(int i = 0; i < intersections.size(); i++) {
+                if(i > 0 && indexOfVertex(intersections.get(i)) != -1) {
+                    count++;
+                    break;
+                }
+            }
+            
+            if(count % 2 == 0) {
+                return PointPosition.OUTSIDE;
+            }
+        }
+        
+        return PointPosition.INSIDE;
+    }
     
     /**
-     * Checks if this shape contains specified point
+     * Returns index of specified vertex or -1 if point does not found
      * 
-     * @param point specified Point for checking
-     * @return true if point inside or on the border of shape; false otherwise
+     * @param point specified vertex
+     * @return index of specified vertex or -1 if point does not found
      */
-    public boolean contains(Point point);
+    protected int indexOfVertex(Point point) {
+        Point[] vertices = getVertices();
+        for(int i = 0; i < vertices.length; i++) {
+            if(vertices[i].equals(point)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    /**
+     * Returns true if point located inside the polygon, or at vertex or on edge
+     * 
+     * <p>This method uses {@link #getPointPosition(Point)}</p>
+     * 
+     * @return true if point inside or on the border of polygon; false otherwise
+     */
+    public boolean contains(Point point) {
+        return getPointPosition(point) != PointPosition.OUTSIDE;
+    }
     
     /**
      * Checks if this shape contains specified shape
@@ -53,7 +106,7 @@ public interface Shape {
      * @param other specified Shape for checking
      * @return true if point inside or on the border of shape; false otherwise
      */
-    public boolean contains(Shape other);
+    public abstract boolean contains(Shape other);
     
     /**
      * Implementor must returns a {@link java.util.List List} of {@link Point} objects, represents the points of intersection
@@ -61,7 +114,7 @@ public interface Shape {
      * @param line specified line
      * @return intersection points list
      */
-    public List<Point> getIntersections(StraightLine line);
+    public abstract List<Point> getIntersections(StraightLine line);
     
     /**
      * Implementor must returns a {@link java.util.List List} of {@link Shape} objects, represents an intersection areas
@@ -69,7 +122,7 @@ public interface Shape {
      * @param other specified shape
      * @return list of {@link Shape} objects, represents an intersection areas
      */
-    public List<Shape> getIntersectionAreas(Shape other);
+    public abstract List<Shape> getIntersectionAreas(Shape other);
     
     /**
      * Checks if specified line and this shape have an intersection area
@@ -77,7 +130,7 @@ public interface Shape {
      * @param line specified line
      * @return true if shape and line have an intersection area, false otherwise
      */
-    public default boolean hasIntersection(StraightLine line) {
+    public boolean hasIntersection(StraightLine line) {
         return getIntersections(line).size() > 0;
     }
     
@@ -87,7 +140,7 @@ public interface Shape {
      * @param other specified shape
      * @return true if shapes have an intersection area, false otherwise
      */
-    public default boolean hasIntersectionArea(Shape other) {
+    public boolean hasIntersectionArea(Shape other) {
         return getIntersectionAreas(other).size() > 0;
     }
     
@@ -96,7 +149,7 @@ public interface Shape {
      * 
      * @return an array of shape's edges
      */
-    public default LineSegment[] getEdges() {
+    public LineSegment[] getEdges() {
         Point[] vertices = getVertices();
         LineSegment[] edges = new LineSegment[vertices.length];
         for(int i = 1; i < vertices.length; i++) {
