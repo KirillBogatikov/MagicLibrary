@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.kllbff.magiclibrary.geometry.LineSegment;
 import org.kllbff.magiclibrary.geometry.Point;
+import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
 
 /**
@@ -213,42 +214,6 @@ public class Polygon extends Shape {
     }
 
     /**
-     * Checks whether a specified shape lies within a polygon
-     * 
-     * <p>Checking divided into two stages:
-     * <dl>
-     *      <dt>Checking shape's vertices</dt>
-     *      <dd>Checks if this polygon contains each vertex. If all vertices inside the polygon, ran second stage</dd>
-     *      <dt>Checking edges intersections</dt>
-     *      <dd>Checks if this polygon edges has intersections with edges of shape. Intersections at polygon's vertices ignored. If intersections not found, it is believed that the shape is inside</dd>
-     * </dl>
-     */
-    @Override
-    public boolean contains(Shape other) {
-        Point[] vertices = other.getVertices();
-        
-        for(int i = 1; i < vertices.length; i++) {
-            if(!contains(vertices[i])) {
-                return false;
-            }
-        }
-        
-        LineSegment[] myEdges = getEdges();
-        LineSegment[] otherEdges = other.getEdges();
-        
-        for(LineSegment otherEdge : otherEdges) {
-            for(LineSegment myEdge : myEdges) {
-                Point point = otherEdge.getIntersection(myEdge);
-                if(point != null && this.vertices.indexOf(point) == -1) {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
-    }
-
-    /**
      * Returns a List of Point objects, represents the points of intersection
      */
     @Override
@@ -275,6 +240,18 @@ public class Polygon extends Shape {
     @Override
     public List<Shape> getIntersectionAreas(Shape other) {
         ArrayList<Shape> shapes = new ArrayList<>();
+        
+        Polygon area = new Polygon();
+        Point[] vertices = other.getVertices();
+        for(Point vertex : vertices) {
+            if(getPointPosition(vertex) == PointPosition.INSIDE) {
+                area.addVertex(vertex);
+            } else {
+                
+            }
+            //LineSegment[] edges = other.getEdges(vertex);
+            //edges[0].hasIntersection(other)
+        }
         
         return shapes;
     }
@@ -337,6 +314,11 @@ public class Polygon extends Shape {
     
     private void throwVertexNotFound(Point vertex) {
         throw new RuntimeException("Vertex at (" + vertex.getX() + ", " + vertex.getY() + ") does not found in " + this);
+    }
+    
+    @Override
+    protected int indexOfVertex(Point point) {
+        return vertices.indexOf(point);
     }
     
     /**

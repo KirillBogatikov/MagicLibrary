@@ -100,13 +100,39 @@ public abstract class Shape {
     }
     
     /**
-     * Checks if this shape contains specified shape
-     * <p>It is believed that the shape A contains a shape B if all the vertices of the figure B lie inside the shape or on its borders</p>
+     * Checks whether a specified shape lies within a polygon
      * 
-     * @param other specified Shape for checking
-     * @return true if point inside or on the border of shape; false otherwise
+     * <p>Checking divided into two stages:
+     * <dl>
+     *      <dt>Checking shape's vertices</dt>
+     *      <dd>Checks if this shape contains each vertex. If all vertices inside the shape, ran second stage</dd>
+     *      <dt>Checking edges intersections</dt>
+     *      <dd>Checks if this shape edges has intersections with edges of specified shape. Intersections at shape's vertices ignored. If intersections not found, it is believed that the specified shape is inside</dd>
+     * </dl>
      */
-    public abstract boolean contains(Shape other);
+    public boolean contains(Shape other) {
+        Point[] vertices = other.getVertices();
+        
+        for(int i = 1; i < vertices.length; i++) {
+            if(!contains(vertices[i])) {
+                return false;
+            }
+        }
+        
+        LineSegment[] myEdges = getEdges();
+        LineSegment[] otherEdges = other.getEdges();
+        
+        for(LineSegment otherEdge : otherEdges) {
+            for(LineSegment myEdge : myEdges) {
+                Point point = otherEdge.getIntersection(myEdge);
+                if(point != null && indexOfVertex(point) == -1) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
     
     /**
      * Implementor must returns a {@link java.util.List List} of {@link Point} objects, represents the points of intersection
@@ -156,6 +182,22 @@ public abstract class Shape {
             edges[i - 1] = new LineSegment(vertices[i - 1], vertices[i]);
         }
         edges[vertices.length - 1] = new LineSegment(vertices[vertices.length - 1], vertices[0]);
+        return edges;
+    }
+
+    public LineSegment[] getEdges(Point vertex) {
+        int i = indexOfVertex(vertex);
+        if(i == -1) {
+            return null;
+        }
+        
+        Point[] vertices = getVertices();
+        LineSegment[] edges = new LineSegment[2];
+        
+        int j = i == 0 ? vertices.length - 1 : i - 1;
+        int k = i == vertices.length - 1 ? 0 : i + 1; 
+        edges[0] = new LineSegment(vertices[i], vertices[j]);
+        edges[1] = new LineSegment(vertices[i], vertices[k]);
         return edges;
     }
 }
