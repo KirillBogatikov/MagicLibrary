@@ -39,7 +39,7 @@ public class Polygon implements Shape {
     }
     
     /**
-     * Initilizes polygon by given vertices
+     * Initializes polygon by given vertices
      * 
      * @param vertices array or sequence of {@link Point points}
      * @throws RuntimeException if given less than 3 vertices
@@ -222,31 +222,27 @@ public class Polygon implements Shape {
      *      <li>{@link PointPosition#OUTSIDE} if point located outside the polygon;</li>
      *      <li>{@link PointPosition#ON_BORDER} if point located on polygon's edge;</li>
      * </ul></p>
+     * <p>This method uses rays from specified point to each vertex. If at least one ray has even number of interceptions with polygon's edges
+     * it is believed that the point is outside</p>
      * 
      * @param point specified {@link Point} for checking
      * @return one of enum {@link PointPosition}
      */
     @Override
     public PointPosition getPointPosition(Point point) {
-        return null;
-    }
-
-    /**
-     * Returns true if point located inside the polygon, or at vertex or on edge
-     * 
-     * <p>This method uses rays from specified point to each vertex. If at least one ray has event number of interceptions with polygon's edges
-     * it is believed that the point is outside</p>
-     * 
-     * @return true if point inside or on the border of polygon; false otherwise
-     */
-    @Override
-    public boolean contains(Point point) {
+        LineSegment[] edges = getEdges();
+        for(LineSegment edge : edges) {
+            if(edge.contains(point)) {
+                return PointPosition.ON_BORDER;
+            }
+        }
+        
         LineSegment line;
         List<Point> intersections;
         
         for(Point v : vertices) {
             if(point.equals(v)) {
-                return true;
+                return PointPosition.IN_VERTEX;
             }
         
             line = new LineSegment(point, v);
@@ -261,11 +257,23 @@ public class Polygon implements Shape {
             }
             
             if(count % 2 == 0) {
-                return false;
+                return PointPosition.OUTSIDE;
             }
         }
         
-        return true;
+        return PointPosition.INSIDE;
+    }
+
+    /**
+     * Returns true if point located inside the polygon, or at vertex or on edge
+     * 
+     * <p>This method uses {@link #getPointPosition(Point)}</p>
+     * 
+     * @return true if point inside or on the border of polygon; false otherwise
+     */
+    @Override
+    public boolean contains(Point point) {
+        return getPointPosition(point) != PointPosition.OUTSIDE;
     }
 
     /**
@@ -275,7 +283,7 @@ public class Polygon implements Shape {
      * <dl>
      *      <dt>Checking shape's vertices</dt>
      *      <dd>Checks if this polygon contains each vertex. If all vertices inside the polygon, ran second stage</dd>
-     *      <dt>Checking edges intercestions</dt>
+     *      <dt>Checking edges intersections</dt>
      *      <dd>Checks if this polygon edges has intersections with edges of shape. Intersections at polygon's vertices ignored. If intersections not found, it is believed that the shape is inside</dd>
      * </dl>
      */
@@ -395,6 +403,12 @@ public class Polygon implements Shape {
         throw new RuntimeException("Vertex at (" + vertex.getX() + ", " + vertex.getY() + ") does not found in " + this);
     }
     
+    /**
+     * Returns string representation of the object
+     * <pre><ode>
+     *     "Polygon with " + getVerticesCount() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")"
+     * </code></pre>
+     */
     @Override
     public String toString() {
         return "Polygon with " + getVerticesCount() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")";
