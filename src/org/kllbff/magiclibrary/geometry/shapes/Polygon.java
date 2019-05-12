@@ -175,18 +175,64 @@ public class Polygon extends Shape {
 
     @Override
     public PointPosition getPointPosition(Point point) {
-        // TODO Auto-generated method stub
-        return null;
+        for(Point vx : vertices) {
+            if(vx.equals(point)) {
+                return PointPosition.IN_VERTEX;
+            }
+        }
+        
+        LineSegment[] edges = getEdges();
+        for(LineSegment edge : edges) {
+            if(edge.contains(point)) {
+                return PointPosition.ON_SHAPE_EDGE;
+            }
+        }
+        
+        double nearestDist = Double.MAX_VALUE, dist;
+        Point nearest = null;
+        
+        for(LineSegment edge  : edges) {
+            StraightLine line = edge.getPerpendicular(point);
+            if(line != null) {
+                Point pt = edge.getIntersection(line);
+                dist = pt.distanceTo(point);
+                if(dist < nearestDist) {
+                    nearest = pt;
+                    nearestDist = dist;
+                }
+            }
+        }
+        
+        for(Point vx : vertices) {
+            dist = vx.distanceTo(point);
+            if(dist < nearestDist) {
+                nearest = vx;
+                nearestDist = dist;
+            }
+        }
+        
+        double distanceToNearest = origin.distanceTo(nearest);
+        double distanceToPoint = origin.distanceTo(point);
+        
+        if(distanceToNearest < distanceToPoint) {
+            return PointPosition.OUTSIDE;
+        }
+        return PointPosition.INSIDE;
     }
 
     @Override
     public List<Point> getIntersections(StraightLine line) {
+        if(line == null) {
+            throw new NullPointerException("Cannot get intersections with " + this + ": line is null");
+        }
+        
         ArrayList<Point> intersections = new ArrayList<>();
         
         Point intersection;
         for(LineSegment edge : getEdges()) {
             intersection = edge.getIntersection(line);
-            if(intersection != null) {
+            
+            if(intersection != null && !intersections.contains(intersection)) {
                 intersections.add(intersection);
             }
         }
@@ -236,8 +282,6 @@ public class Polygon extends Shape {
      *  </p>
      */
     public void update() {
-        cache = vertices.toArray(new Point[0]);
-        
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
@@ -267,6 +311,7 @@ public class Polygon extends Shape {
         this.origin.setY(minY + height / 2);
         
         this.vertices.sort(verticesComparator);
+        cache = vertices.toArray(new Point[0]);
     }
     
     private void throwVertexExists(Point vertex) {
