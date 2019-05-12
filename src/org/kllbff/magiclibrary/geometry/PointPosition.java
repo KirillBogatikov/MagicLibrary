@@ -11,5 +11,5 @@ package org.kllbff.magiclibrary.geometry;
 public enum PointPosition {
     INSIDE, OUTSIDE,
     /* used only for shapes */
-    ON_BORDER, IN_VERTEX
+    ON_SHAPE_EDGE, IN_VERTEX
 }
