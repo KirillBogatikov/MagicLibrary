@@ -102,10 +102,13 @@ public class LineSegment extends StraightLine {
         return position;
     }
     
-    private boolean isOutside(Point point) {
-        Point middle = new Point((first.getX() + second.getX()) / 2, (first.getY() + second.getY()) / 2);
-        double d = point.distanceTo(middle);
-        return d > first.distanceTo(middle);  
+    @Override
+    public StraightLine getPerpendicular(Point point) {
+        StraightLine line = super.getPerpendicular(point);
+        if(hasIntersection(line)) {
+            return line;
+        }
+        return null;
     }
     
     /**
@@ -131,5 +134,11 @@ public class LineSegment extends StraightLine {
         builder.append(")");
         
         return builder.toString();
+    }
+    
+    private boolean isOutside(Point point) {
+        Point middle = new Point((first.getX() + second.getX()) / 2, (first.getY() + second.getY()) / 2);
+        double d = point.distanceTo(middle);
+        return d > first.distanceTo(middle);  
     }
 }
