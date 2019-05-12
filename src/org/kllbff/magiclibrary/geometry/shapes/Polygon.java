@@ -266,6 +266,10 @@ public class Polygon extends Shape {
                 }
             }
         }
+        
+        if(vertices.size() < 3) {
+            return null;
+        }
 
         Polygon polygon = new Polygon();
         polygon.vertices.addAll(vertices);
