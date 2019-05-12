@@ -25,52 +25,20 @@ import org.kllbff.magiclibrary.geometry.StraightLine;
 public abstract class Shape {
     /**
      * Must returns array of shape's vertices
+     * <p>Array must be sorted in ascending angles between the line connecting
+     *    the top and the center of the shape starting from the leftmost vertex</p>
      * 
      * @return array of shape's vertices
      */
     public abstract Point[] getVertices();
     
     /**
-     * Returns one item from {@link PointPosition}, representing position of specified point on this shape
+     * Must returns one item from {@link PointPosition}, representing position of specified point on this shape
      * 
      * @param point specified {@link Point} for checking
      * @return one of enum {@link PointPosition}
      */
-    public PointPosition getPointPosition(Point point) {
-        LineSegment[] edges = getEdges();
-        for(LineSegment edge : edges) {
-            if(edge.contains(point)) {
-                return PointPosition.ON_BORDER;
-            }
-        }
-        
-        LineSegment line;
-        List<Point> intersections;
-        Point[] vertices = getVertices();
-        
-        for(Point v : vertices) {
-            if(point.equals(v)) {
-                return PointPosition.IN_VERTEX;
-            }
-        
-            line = new LineSegment(point, v);
-            intersections = getIntersections(line);
-            
-            int count = intersections.size();
-            for(int i = 0; i < intersections.size(); i++) {
-                if(i > 0 && indexOfVertex(intersections.get(i)) != -1) {
-                    count++;
-                    break;
-                }
-            }
-            
-            if(count % 2 == 0) {
-                return PointPosition.OUTSIDE;
-            }
-        }
-        
-        return PointPosition.INSIDE;
-    }
+    public abstract PointPosition getPointPosition(Point point);
     
     /**
      * Returns index of specified vertex or -1 if point does not found
@@ -109,6 +77,8 @@ public abstract class Shape {
      *      <dt>Checking edges intersections</dt>
      *      <dd>Checks if this shape edges has intersections with edges of specified shape. Intersections at shape's vertices ignored. If intersections not found, it is believed that the specified shape is inside</dd>
      * </dl>
+     * 
+     * @param other specified shape
      */
     public boolean contains(Shape other) {
         Point[] vertices = other.getVertices();
@@ -185,7 +155,13 @@ public abstract class Shape {
         return edges;
     }
 
-    public LineSegment[] getEdges(Point vertex) {
+    /**
+     * Returns two edges that share a vertex in the shape <i>vertex</i> or null if specified point does not shape's vertex
+     * 
+     * @param vertex specified vertex contained in this shape
+     * @return array of two edges that share a vertex in the shape <i>vertex</i> or null
+     */
+    public LineSegment[] getVertexEdges(Point vertex) {
         int i = indexOfVertex(vertex);
         if(i == -1) {
             return null;
