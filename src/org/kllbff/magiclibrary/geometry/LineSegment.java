@@ -45,6 +45,16 @@ public class LineSegment extends StraightLine {
     }    
     
     /**
+     * Initializes line by given straight line
+     * <p>Constructor uses StraightLine's first and second points to describe points of this segment</p>
+     * 
+     * @param straight a base straight line
+     */
+    public LineSegment(StraightLine straight) {
+       this(straight.first, straight.second); 
+    }
+    
+    /**
      * Returns point of intersection this line with specified line or <code>null</code> if intersection does not exist
      * 
      * @param other specified line
@@ -54,7 +64,7 @@ public class LineSegment extends StraightLine {
         Point point = super.getIntersection(other);
         
         if(point == null) {
-            return point;
+            return null;
         }
         
         if(!isOutside(point) && other.getPointPosition(point) == PointPosition.INSIDE) {
