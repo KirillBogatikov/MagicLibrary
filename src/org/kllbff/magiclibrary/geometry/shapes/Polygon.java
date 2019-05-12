@@ -9,26 +9,10 @@ import org.kllbff.magiclibrary.geometry.Point;
 import org.kllbff.magiclibrary.geometry.PointPosition;
 import org.kllbff.magiclibrary.geometry.StraightLine;
 
-/**
- * <h3>Represents Polygon shape</h3>
- * <p>Polygon is a shape, containing a tree or more vertices. This polygon is extensible: class has some methods for adding and removing vertices.</p>
- * <p>This class implements all methods from {@link Shape} interface, but has some own:
- *     <ul>
- *          <li>{@link #addVertex(Point)}, {@link #addVertex(double, double)} for adding one vertex to polygon;</li>
- *          <li>{@link #addVertices(Point...)} for adding sequence or array of vertices;</li>
- *          <li>{@link #removeVertex(Point)}, {@link #removeVertex(double, double)} for removing vertex from polygon;</li>
- *          <li>{@link #removeVertices(Point...)} for removing sequence or array of vertices;</li>
- *          <li>{@link #getVerticesCount()} for getting count of polygon's vertices</li>
- *          <li>{@link #update()} for updating polygons's bounding rectangle after manual changing of vertices coordinates</li>
- *     </ul></p>
- *    
- * @author Kirill Bogatikov
- * @version 1.0
- * @since 1.0
- */
 public class Polygon extends Shape {
     private Comparator<Point> verticesComparator;
     private List<Point> vertices;
+    private Point[] cache;
     private Point origin;
     
     /**
@@ -59,7 +43,7 @@ public class Polygon extends Shape {
             addVertices(vertices);
         }
     }
-        
+    
     /**
      * Adds vertex to polygon
      * 
@@ -122,7 +106,7 @@ public class Polygon extends Shape {
             throwVertexExists(error);
         }
     }
-    
+
     /**
      * Removes vertex from polygon
      * 
@@ -184,78 +168,53 @@ public class Polygon extends Shape {
         }
     }
     
-    /**
-     * Returns number of current added to polygon vertices
-     * 
-     * @return vertices count
-     */
-    public int getVerticesCount() {
-        return vertices.size();
-    }
-    
-    /**
-     * Returns a copy of origin point - current center of polygon's bounding rectangle
-     * <p>This methods returns only copy - changes of returned point have not affect of origin bouding center point object</p> 
-     *  
-     * @return a copy of origin point - current center of polygon's bounding rectangle
-     */
-    public Point getBoundsCenter() {
-        return new Point(origin.getX(), origin.getY());
-    }
-    
-    /**
-     * Returns array of polygon's vertices
-     * 
-     * @return array of polygon's vertices
-     */
     @Override
     public Point[] getVertices() {
-        return vertices.toArray(new Point[0]);
+        return cache;
     }
 
-    /**
-     * Returns a List of Point objects, represents the points of intersection
-     */
+    @Override
+    public PointPosition getPointPosition(Point point) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     @Override
     public List<Point> getIntersections(StraightLine line) {
-        ArrayList<Point> points = new ArrayList<>();
+        ArrayList<Point> intersections = new ArrayList<>();
         
-        LineSegment edge;
-        Point point;
-        for(int i = 1; i <= vertices.size(); i++) {
-            edge = new LineSegment(vertices.get(i == vertices.size() ? 0 : i), vertices.get(i - 1));
-            point = edge.getIntersection(line);
-            
-            if(point != null && !points.contains(point)) {
-                points.add(point);
+        Point intersection;
+        for(LineSegment edge : getEdges()) {
+            intersection = edge.getIntersection(line);
+            if(intersection != null) {
+                intersections.add(intersection);
             }
         }
-        
-        return points;
+        return intersections;
     }
 
-    /**
-     * Returns a List of Shape objects, represents intersection areas with specified shape
-     */
     @Override
     public List<Shape> getIntersectionAreas(Shape other) {
-        ArrayList<Shape> shapes = new ArrayList<>();
-        
-        Polygon area = new Polygon();
-        Point[] vertices = other.getVertices();
-        for(Point vertex : vertices) {
-            if(getPointPosition(vertex) == PointPosition.INSIDE) {
-                area.addVertex(vertex);
-            } else {
-                
-            }
-            //LineSegment[] edges = other.getEdges(vertex);
-            //edges[0].hasIntersection(other)
-        }
-        
-        return shapes;
+        // TODO Auto-generated method stub
+        return null;
     }
     
+    @Override
+    protected int indexOfVertex(Point point) {
+        return vertices.indexOf(point);
+    }
+    
+    /**
+     * Returns string representation of the object
+     * <pre><ode>
+     *     "Polygon with " + getVerticesCount() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")"
+     * </code></pre>
+     */
+    @Override
+    public String toString() {
+        return "Polygon with " + vertices.size() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")";
+    }
+
     /**
      * Updates bounding rectangle and calculates it's center point
      * <p>This method <b>must be called</b> manually after every changing of added vertices coordinates. <br>
@@ -277,6 +236,8 @@ public class Polygon extends Shape {
      *  </p>
      */
     public void update() {
+        cache = vertices.toArray(new Point[0]);
+        
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
@@ -314,21 +275,5 @@ public class Polygon extends Shape {
     
     private void throwVertexNotFound(Point vertex) {
         throw new RuntimeException("Vertex at (" + vertex.getX() + ", " + vertex.getY() + ") does not found in " + this);
-    }
-    
-    @Override
-    protected int indexOfVertex(Point point) {
-        return vertices.indexOf(point);
-    }
-    
-    /**
-     * Returns string representation of the object
-     * <pre><ode>
-     *     "Polygon with " + getVerticesCount() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")"
-     * </code></pre>
-     */
-    @Override
-    public String toString() {
-        return "Polygon with " + getVerticesCount() + " vertexes and center at (" + origin.getX() + ", " + origin.getY() + ")";
     }
 }
