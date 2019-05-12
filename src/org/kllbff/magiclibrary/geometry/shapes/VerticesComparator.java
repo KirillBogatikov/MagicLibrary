@@ -21,8 +21,8 @@ public class VerticesComparator implements Comparator<Point> {
     
     @Override
     public int compare(Point a, Point b) {
-        double angleA = Math.toDegrees(Math.atan2(a.getY() - origin.getY(), a.getX() - origin.getX()));
-        double angleB = Math.toDegrees(Math.atan2(b.getY() - origin.getY(), b.getX() - origin.getX()));
+        double angleA = (Math.toDegrees(Math.atan2(a.getY() - origin.getY(), a.getX() - origin.getX())) + 360) % 360;
+        double angleB = (Math.toDegrees(Math.atan2(b.getY() - origin.getY(), b.getX() - origin.getX())) + 360) % 360;
         
         angleA = Math.ceil(angleA);
         angleB = Math.ceil(angleB);
