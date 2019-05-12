@@ -204,6 +204,20 @@ public class StraightLine {
     }
     
     /**
+     * Returns a StraightLine perpendicular to this line
+     * 
+     * @param point line at this line through which perpendicular will be drawn
+     * @return StraightLine perpendicular to this line
+     */
+    public StraightLine getPerpendicular(Point point) {
+        if(contains(point)) {
+            double angle = getAngle() + Math.PI / 2;
+            return new StraightLine(point, new Point(point.getX() + Math.cos(angle), point.getY() + Math.sin(angle)));
+        }
+        return null;
+    }
+    
+    /**
      * Returns a string representation of the line segment, containing this vaertices current coordinates 
      * 
      * @return String representation of the form: <code>"Straight line at (" + {@link Point#getX()} + ", " + {@link Point#getY()} + ") and (" +  + {@link Point#getX()} + ", " + {@link Point#getY()} + ")"</code>
