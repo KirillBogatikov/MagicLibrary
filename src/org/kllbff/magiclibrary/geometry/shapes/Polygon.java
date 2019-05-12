@@ -245,6 +245,35 @@ public class Polygon extends Shape {
         return null;
     }
     
+    public Polygon getArea(Shape other) {
+        ArrayList<Point> vertices = new ArrayList<>();
+        for(Point vx : other.getVertices()) {
+            if(getPointPosition(vx) == PointPosition.INSIDE) {
+                vertices.add(vx);
+            }
+        }
+        for(Point vx : getVertices()) {
+            if(other.getPointPosition(vx) == PointPosition.INSIDE) {
+                vertices.add(vx);
+            }
+        }
+        
+        for(LineSegment line : other.getEdges()) {
+            for(LineSegment edge : getEdges()) {
+                Point pt =  line.getIntersection(edge);
+                if(pt != null && !vertices.contains(pt)) {
+                    vertices.add(pt);
+                }
+            }
+        }
+
+        Polygon polygon = new Polygon();
+        polygon.vertices.addAll(vertices);
+        polygon.update();
+        
+        return polygon;
+    }
+    
     @Override
     protected int indexOfVertex(Point point) {
         return vertices.indexOf(point);
