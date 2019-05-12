@@ -206,15 +206,12 @@ public class StraightLine {
     /**
      * Returns a StraightLine perpendicular to this line
      * 
-     * @param point line at this line through which perpendicular will be drawn
+     * @param point line through which perpendicular will be drawn
      * @return StraightLine perpendicular to this line
      */
     public StraightLine getPerpendicular(Point point) {
-        if(contains(point)) {
-            double angle = getAngle() + Math.PI / 2;
-            return new StraightLine(point, new Point(point.getX() + Math.cos(angle), point.getY() + Math.sin(angle)));
-        }
-        return null;
+        double angle = getAngle() + Math.PI / 2;
+        return new StraightLine(point, new Point(point.getX() + Math.cos(angle), point.getY() + Math.sin(angle)));
     }
     
     /**
