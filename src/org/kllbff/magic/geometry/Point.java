@@ -1,4 +1,4 @@
-package org.kllbff.magiclibrary.geometry;
+package org.kllbff.magic.geometry;
 
 /**
  * <h3>Represents a point in two-dimensional space (plane)</h3>
@@ -22,7 +22,7 @@ package org.kllbff.magiclibrary.geometry;
  * @version 1.0
  * @since 1.0
  */
-public class Point implements Comparable<Point> {
+public class Point implements Comparable<Point>, Primitive {
     private double distanceToStart;
     private double x, y;
     
@@ -117,17 +117,29 @@ public class Point implements Comparable<Point> {
     public boolean equals(Object other) {
         try {
             Point p = (Point)other;
-            if(p.x == x && p.y == y) {
+            if(Double.doubleToLongBits(x) == Double.doubleToLongBits(p.x) &&
+               Double.doubleToLongBits(y) == Double.doubleToLongBits(p.y)) {
                 return true;
             }
         } catch(ClassCastException | NullPointerException ex){}
         return false;
     }
     
+    @Override
+    public int hashCode() {
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = 37 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 37 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+    
     /**
      * Compares two points according using distance between every point and Origin point by the following rule:
      * <p><ul>
-     *     <li>if distance between this point and Origin greater than distance between specified point and Origin, returns positive integer</li>
+     *  <li>if distance between this point and Origin greater than distance between specified point and Origin, returns positive integer</li>
      *  <li>if distance between this point and Origin less than distance between specified point and Origin, returns negative integer</li>
      *  <li>if distance between this point and Origin equals distance between specified point and Origin, returns zero</li>   
      * </ul></p>
@@ -149,6 +161,50 @@ public class Point implements Comparable<Point> {
         
         /* equals */
         return 0;
+    }
+    
+    /**
+     * Returns new instance of Point class, equals to this by content, but difference by objects in memory
+     */
+    @Override
+    public Point clone() {
+        return new Point(x, y);
+    }
+
+    /**
+     * Translates this point by given coordinates
+     * <p>
+     * This method only increases coordinates of point by specified number of unit segments. 
+     * Example:
+     * <pre>
+     * <code>
+     *     Point p = new Point(0, 0);
+     *     
+     *     p.translate(5, 3);
+     *     //now p in 5, 3
+     *     
+     *     p.translate(1, 2);
+     *     //now p in 6 (5 + 1), 5 (3 + 2)
+     * </code>
+     * </pre>
+     * </p>
+     */
+    @Override
+    public void translate(double x, double y) {
+        this.x += x;
+        this.y += y;
+    }
+    
+    @Override
+    public void rotateByOrigin(double angle) {
+        if(angle == 0 || angle == Math.PI * 2) {
+            return;
+        }
+        
+        float cos = (float)Math.cos(angle), sin = (float)Math.sin(angle);
+        float nx = (float)x * sin - (float)y * cos;
+        this.y = (float)x * sin + (float)y * cos;
+        this.x = nx;
     }
     
     /**
