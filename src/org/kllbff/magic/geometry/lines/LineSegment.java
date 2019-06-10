@@ -49,11 +49,19 @@ public class LineSegment extends StraightLine {
      */
     @Override
     public Point getIntersection(Line other) {
-        Point point = super.getIntersection(other);
-        if(point == null || isOutside(point)) {
+        Point point = super.getIntersection(other);        
+        if(point == null || !other.contains(point)) {
             return null;
         }
         return point;
+    }
+    
+    public StraightLine getPerpendicular(Point point) {
+        StraightLine perpendicular = super.getPerpendicular(point);
+        if(!hasIntersection(perpendicular)) {
+            return null;
+        }
+        return perpendicular;
     }
     
     @Override
@@ -63,6 +71,10 @@ public class LineSegment extends StraightLine {
             return PointPosition.OUTSIDE;
         }
         return PointPosition.INSIDE;
+    }
+    
+    public boolean contains(Point point) {
+        return super.contains(point) && !isOutside(point);
     }
     
     @Override
@@ -78,6 +90,18 @@ public class LineSegment extends StraightLine {
     private boolean isOutside(Point point) {
         Point middle = new Point((first.getX() + second.getX()) / 2, (first.getY() + second.getY()) / 2);
         double d = point.distanceTo(middle);
+        
         return d > first.distanceTo(middle);  
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Line segment from (")
+               .append(first.getX()).append(", ").append(first.getY())
+               .append(") to (")
+               .append(second.getX()).append(", ").append(second.getY())
+               .append(")");
+        return builder.toString();
     }
 }

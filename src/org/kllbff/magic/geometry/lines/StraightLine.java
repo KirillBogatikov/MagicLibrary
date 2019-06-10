@@ -136,14 +136,16 @@ public class StraightLine extends Line {
         solver.add(y2 - y1, y4 - y3);
         
         double[] t = solver.solve(x3 - x1, y3 - y1);
-        if(Double.isInfinite(t[0]) || Double.isInfinite(t[1])) {
+        
+        if(Double.isInfinite(t[0])) {
             return null;
         }
             
-        Point p = new Point(x1 + (x2 - x1) * t[0], y1 + (y2 - y1) * t[1]);
-        if(other.contains(p)) {
+        Point p = new Point(x1 + (x2 - x1) * t[0], y1 + (y2 - y1) * (t[0]));
+        if(contains(p)) {
             return p;
         }
+        
         return null;
     }
 
@@ -167,7 +169,29 @@ public class StraightLine extends Line {
      */
     public StraightLine getPerpendicular(Point point) {
         double angle = getAngle() + Math.PI / 2;
-        return new StraightLine(point, new Point(point.getX() + Math.cos(angle), point.getY() + Math.sin(angle)));
+        
+        boolean changedX = false, changedY = false;
+        double x = point.getX(), y = point.getY();
+        if(x == 0) {
+            x++;
+            changedX = true;
+        }
+        if(y == 0) {
+            y++;
+            changedY = true;
+        }
+        
+        x += Math.cos(angle);
+        y += Math.sin(angle);
+        
+        if(changedX) {
+            x--;
+        }
+        if(changedY) {
+            y--;
+        }
+        
+        return new StraightLine(point.clone(), new Point(x, y));
     }
     
     @Override
