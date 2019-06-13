@@ -1,4 +1,4 @@
-package org.kllbff.magic.geometry.shapes;
+package org.kllbff.magic.geometry.utils;
 
 import java.util.Comparator;
 
@@ -26,7 +26,7 @@ public class VerticesComparator implements Comparator<Point> {
         
         angleA = Math.ceil(angleA);
         angleB = Math.ceil(angleB);
-        
+                
         if(angleA == angleB || Math.abs(angleA - angleB) <= accuracy) {
             return Double.compare(a.distanceTo(origin), b.distanceTo(origin));
         }
