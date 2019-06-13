@@ -56,6 +56,14 @@ public class LineSegment extends StraightLine {
         return point;
     }
     
+    /**
+     * Returns a StraightLine perpendicular to this line or <i>null</i> if 
+     * line segment can not has perpendicular line to specified point
+     * 
+     * @param point line through which perpendicular will be drawn
+     * @return StraightLine perpendicular to this line
+     */
+    @Override
     public StraightLine getPerpendicular(Point point) {
         StraightLine perpendicular = super.getPerpendicular(point);
         if(!hasIntersection(perpendicular)) {
@@ -73,6 +81,7 @@ public class LineSegment extends StraightLine {
         return PointPosition.INSIDE;
     }
     
+    @Override
     public boolean contains(Point point) {
         return super.contains(point) && !isOutside(point);
     }
