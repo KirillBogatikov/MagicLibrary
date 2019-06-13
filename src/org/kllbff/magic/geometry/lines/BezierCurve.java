@@ -1,4 +1,4 @@
-  package org.kllbff.magic.geometry.lines;
+package org.kllbff.magic.geometry.lines;
 
 import java.util.HashMap;
 import java.util.HashSet;
