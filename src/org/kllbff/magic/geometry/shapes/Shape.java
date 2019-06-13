@@ -109,10 +109,21 @@ public abstract class Shape implements Primitive {
     public boolean contains(Point point) {
         return getPointPosition(point) != PointPosition.OUTSIDE;
     }
+    
+    /**
+     * Returns an point which defines center of current shape
+     * <p>Returned point has only info value, changing of coordinates
+     *    of this point has not effect</p>
+     * 
+     * @return center of this shape
+     */
+    public abstract Point getCenterPoint();
 
     @Override
     public abstract void translate(double x, double y);
 
+    public abstract void rotate(double angle);
+    
     @Override
     public abstract void rotateByOrigin(double angle);
     
