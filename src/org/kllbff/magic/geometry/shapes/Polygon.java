@@ -9,18 +9,29 @@ import org.kllbff.magic.geometry.PointPosition;
 import org.kllbff.magic.geometry.lines.Line;
 import org.kllbff.magic.geometry.lines.LineSegment;
 import org.kllbff.magic.geometry.lines.StraightLine;
+import org.kllbff.magic.geometry.utils.VerticesComparator;
 
 public class Polygon extends Shape {
+    public static Polygon createConcavePolygon(double... coordinates) {
+        Polygon p = new Polygon(false);
+        p.addVertices(coordinates);
+        return p;
+    }
+    
     private Point centerPoint = new Point();
-    private VerticesComparator verticesComparator = new VerticesComparator(centerPoint);
+    private VerticesComparator verticesComparator = null;
     private List<Point> verticesList = new ArrayList<>();
     private Point[] verticesArray = new Point[0];
     
-    public Polygon() {
-        verticesComparator = null;
+    private Polygon(boolean init) {
+        if(init) {
+            verticesComparator = new VerticesComparator(centerPoint);
+        }
     }
     
     public Polygon(Point... vertices) {
+        this(true);
+        
         if(vertices == null) {
             throw new NullPointerException("Vertices array is null");
         }
@@ -29,10 +40,7 @@ public class Polygon extends Shape {
         }
         
         for(Point vertex : vertices) {
-            if(verticesList.contains(vertex)) {
-                throw new RuntimeException("Cannot add vertex " + vertex + ": already contained in polygon");
-            }
-            verticesList.add(vertex);
+            add(vertex, false);
         }
         updateVertices();
     }
@@ -42,6 +50,8 @@ public class Polygon extends Shape {
     }
     
     public Polygon(double... coordinates) {
+        this(true);
+        
         if(coordinates == null) {
             throw new NullPointerException("Coordinates array is null");
         }
@@ -52,15 +62,27 @@ public class Polygon extends Shape {
             throw new RuntimeException("Cannot create polygon with " + (coordinates.length / 2)+ " vertices. Need at least three points");
         }
         
-        Point vertex;
         for(int i = 0; i < coordinates.length; i += 2) {
-            vertex = new Point(coordinates[i], coordinates[i + 1]);
-            if(verticesList.contains(vertex)) {
-                throw new RuntimeException("Cannot add vertex " + vertex + ": already contained in polygon");
-            }
-            verticesList.add(vertex);
+            add(new Point(coordinates[i], coordinates[i + 1]), false);
         }
         updateVertices();
+    }
+    
+    private void add(Point vertex, boolean update) {
+        if(vertex == null) {
+            throw new NullPointerException("Vertex is null");
+        }
+        if(verticesList.contains(vertex)) {
+            throw new RuntimeException("Cannot add vertex " + vertex + ": already contained in polygon");
+        }
+        verticesList.add(vertex);
+        if(update) {
+            updateVertices();
+        }
+    }
+    
+    public void addVertex(Point vertex) {
+        add(vertex, true);
     }
     
     public void addVertices(Point... vertices) {
@@ -69,24 +91,13 @@ public class Polygon extends Shape {
         }
     }
     
-    public void addVertex(Point vertex) {
-        if(vertex == null) {
-            throw new NullPointerException("Vertex is null");
-        }
-        if(verticesList.contains(vertex)) {
-            throw new RuntimeException("Cannot add vertex " + vertex + ": already contained in polygon");
-        }
-        verticesList.add(vertex);
-        updateVertices();
-    }
-    
     public void addVertex(double x, double y) {
         this.addVertex(new Point(x, y));
     }
     
-    public void removeVertices(Point... vertices) {
-        for(Point vertex : vertices) {
-            this.removeVertex(vertex);
+    public void addVertices(double... coordinates) {
+        for(int i = 0; i < coordinates.length; i += 2) {
+            this.addVertex(coordinates[i], coordinates[i + 1]);
         }
     }
     
@@ -101,8 +112,20 @@ public class Polygon extends Shape {
         updateVertices();
     }
     
+    public void removeVertices(Point... vertices) {
+        for(Point vertex : vertices) {
+            this.removeVertex(vertex);
+        }
+    }
+    
     public void removeVertex(double x, double y) {
         this.removeVertex(new Point(x, y));
+    }
+    
+    public void removeVertices(double... coordinates) {
+        for(int i = 0; i < coordinates.length; i += 2) {
+            this.removeVertex(coordinates[i], coordinates[i + 1]);
+        }
     }
     
     public void updateVertices() {
@@ -136,6 +159,11 @@ public class Polygon extends Shape {
         
         if(verticesComparator != null) verticesList.sort(verticesComparator);
         verticesArray = verticesList.toArray(new Point[0]);
+    }
+    
+    @Override
+    public Point getCenterPoint() {
+        return centerPoint.clone();
     }
     
     @Override
@@ -181,32 +209,36 @@ public class Polygon extends Shape {
 
     @Override
     public List<Polygon> getIntersectionAreas(Shape shape) {
-        ArrayList<Point> vertices = new ArrayList<>();
-        for(Point vertex : verticesList) {
-            if(shape.contains(vertex) && !vertices.contains(vertex)) {
-                vertices.add(vertex);
-            }
-        }
-        for(Point vertex : shape.getVertices()) {
-            if(contains(vertex) && !vertices.contains(vertex)) {
-                vertices.add(vertex);
-            }
-        }
-        
+        ArrayList<Point> intersections = new ArrayList<>();        
         LineSegment[] myEdges = getEdges();
         Line[] itEdges = shape.getEdges();
         for(LineSegment myEdge : myEdges) {
             for(Line itEdge : itEdges) {
                 Point i = itEdge.getIntersection(myEdge);
-                if(i != null && !vertices.contains(i)) {
-                    vertices.add(i);
+                if(i != null && !intersections.contains(i)) {
+                    intersections.add(i);
                 }
             }
         }
-                
-        ArrayList<Polygon> result = new ArrayList<>();
-        result.add(new Polygon(vertices));
         
+        ArrayList<Point> vertices = new ArrayList<>();
+        for(Point vertex : verticesList) {
+            if(shape.contains(vertex) && !vertices.contains(vertex) && !intersections.contains(vertex)) {
+                vertices.add(vertex);
+            }
+        }
+        for(Point vertex : shape.getVertices()) {
+            if(contains(vertex) && !vertices.contains(vertex) && !intersections.contains(vertex)) {
+                vertices.add(vertex);
+            }
+        }
+                
+        Polygon polygon = new Polygon(true);
+        polygon.addVertices(intersections.toArray(new Point[0]));
+        polygon.addVertices(vertices.toArray(new Point[0]));
+        
+        ArrayList<Polygon> result = new ArrayList<>();
+        result.add(polygon);
         return result;
     }
     
@@ -264,7 +296,7 @@ public class Polygon extends Shape {
         double distanceToNearest = centerPoint.distanceTo(nearest);
         double distanceToPoint = centerPoint.distanceTo(point);
         
-        if(distanceToNearest < distanceToPoint) {
+        if(distanceToNearest <= distanceToPoint) {
             return PointPosition.OUTSIDE;
         }
         return PointPosition.INSIDE;
@@ -284,6 +316,7 @@ public class Polygon extends Shape {
         }
     }
     
+    @Override
     public void rotate(double angle) {
         double x0 = centerPoint.getX();
         double y0 = centerPoint.getY();
