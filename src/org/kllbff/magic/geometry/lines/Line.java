@@ -4,6 +4,16 @@ import org.kllbff.magic.geometry.Point;
 import org.kllbff.magic.geometry.PointPosition;
 import org.kllbff.magic.geometry.Primitive;
 
+/**
+ * <h3>Represents abstract line - a something, connecting two points</h3>
+ * <p>Any abstract methods must be implement by subclasses, but some methods
+ *    already has simple and sometimes very slow implementations. It is to
+ *    be recommended to override all methods for best performance.</p>
+ *  
+ * @author Kirill Bogatikov
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class Line implements Primitive {
     /**
      * Returns point of intersection this line with specified line or <code>null</code> if intersection does not exist
