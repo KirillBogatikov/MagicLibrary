@@ -1,5 +1,7 @@
 package org.kllbff.magic.geometry;
 
+import org.kllbff.magic.math.PlanimetryValues;
+
 /**
  * <h3>Represents a point in two-dimensional space (plane)</h3>
  * <p>A simple point has two characteristics: 
@@ -100,8 +102,8 @@ public class Point implements Comparable<Point>, Primitive {
     /**
      * Compute distance between two points - this and point at given coordinates
      * 
-     * @param x x-axis coordiate of point, distance to which will be computed 
-     * @param y y-axis coordiate of point, distance to which will be computed
+     * @param x x-axis coordinate of point, distance to which will be computed 
+     * @param y y-axis coordinate of point, distance to which will be computed
      * @return distance between two points - this and given
      */
     public double distanceTo(double x, double y) {
@@ -197,14 +199,30 @@ public class Point implements Comparable<Point>, Primitive {
     
     @Override
     public void rotateByOrigin(double angle) {
+        angle = angle % (Math.PI * 2);
         if(angle == 0 || angle == Math.PI * 2) {
             return;
         }
         
-        float cos = (float)Math.cos(angle), sin = (float)Math.sin(angle);
-        float nx = (float)x * sin - (float)y * cos;
-        this.y = (float)x * sin + (float)y * cos;
+        double cos = PlanimetryValues.cos(angle), sin = PlanimetryValues.sin(angle);
+        double nx = x * cos - y * sin;
+        double ny = x * sin + y * cos;
+        
         this.x = nx;
+        this.y = ny;
+    }
+    
+    public void rotateBy(double angle, Point point) {
+        double x0 = point.getX();
+        double y0 = point.getY();
+        
+        double cos = PlanimetryValues.cos(angle), sin = PlanimetryValues.sin(angle);
+                
+        double nx = x0 + (x - x0) * cos - (y - y0) * sin;
+        double ny = y0 + (y - y0) * sin + (x - x0) * cos;   
+        
+        this.x = nx;
+        this.y = ny;
     }
     
     /**
