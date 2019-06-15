@@ -1,44 +1,54 @@
 package org.kllbff.magic.geometry.shapes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kllbff.magic.geometry.Point;
 import org.kllbff.magic.geometry.PointPosition;
+import org.kllbff.magic.geometry.lines.BezierCurve;
 import org.kllbff.magic.geometry.lines.Line;
 import org.kllbff.magic.geometry.lines.LineSegment;
 
 public class Rectangle extends Shape {
-    private double x, y;
+    private Point a;
+    private double originAngle, ownAngle;
     private double width, height;
     
     public Rectangle(double x, double y, double width, double height) {
-        this.x = x;
-        this.y = y;
+        this.a = new Point(x, y);
         this.width = width;
         this.height = height;
     }
     
     @Override
     public Point getCenterPoint() {
-        return new Point(x + width / 2, y + height / 2);
+        return new Point(a.getX() + width / 2, a.getY() + height / 2);
     }
     
     public Rectangle(Point leftBottom, Point rightTop) {
         this(leftBottom.getX(), leftBottom.getY(), rightTop.getX() - leftBottom.getX(), rightTop.getY() - leftBottom.getY());
     }
-    
-    private void upd() {
-        
-    }
 
     @Override
     public Point[] getVertices() {
-        return new Point[]{ 
-            new Point(x, y),
-            new Point(x, y + height),
-            new Point(x + width, y + height),
-            new Point(x + width, y)
-        };
+         Point center = new Point(a.getX() + width / 2, a.getY() + height / 2);
+         
+         Point a1 = new Point(a.getX(), a.getY() + height);
+         a1.rotateByOrigin(originAngle);
+         a1.rotateBy(ownAngle, center);
+         Point a2 = new Point(a.getX() + width, a.getY());
+         a2.rotateByOrigin(originAngle);
+         a2.rotateBy(ownAngle, center);
+         Point a3 = new Point(a.getX() + width, a.getY() + height);
+         a3.rotateByOrigin(originAngle);
+         a3.rotateBy(ownAngle, center);
+         
+         return new Point[] { 
+             a.clone(),
+             a1,
+             a3, 
+             a2     
+         };
     }
 
     @Override
@@ -73,8 +83,18 @@ public class Rectangle extends Shape {
 
     @Override
     public List<Point> getIntersectionPoints(Line line) {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<Point> intersections = new ArrayList<>();
+        LineSegment[] edges = getEdges();
+        for(LineSegment edge : edges) {
+            Point i = line.getIntersection(edge);
+            if(i != null) {
+                intersections.add(i);
+                if(line instanceof BezierCurve) {
+                    intersections.add(((BezierCurve)line).getSecondPoint());
+                }
+            }
+        }
+        return intersections;
     }
 
     @Override
@@ -97,10 +117,10 @@ public class Rectangle extends Shape {
             if(edge.contains(point)) {
                 return PointPosition.ON_SHAPE_EDGE;
             }
-        }
+        }        
         
         double x = point.getX(), y = point.getY();
-        if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
+        if(x > a.getX() && x < a.getX() + this.width && y > a.getY() && y < a.getY() + this.height) {
             return PointPosition.INSIDE;
         }
         
@@ -109,38 +129,27 @@ public class Rectangle extends Shape {
 
     @Override
     public void translate(double x, double y) {
-        this.x += x;
-        this.y += y;
+        a.translate(x, y);
     }
     
     @Override
     public void rotate(double angle) {
-        Point center = new Point(x + width /2, y + height / 2);
-        
-        double cos = Math.cos(angle), sin = Math.sin(angle);
-        double rad = center.distanceTo(x, y);
-        
-        double nx = center.getX() * cos, ny = center.getY() * sin;
-        this.x = nx;
-        this.y = y;
+        a.rotateBy(angle, getCenterPoint());
     }
 
     @Override
     public void rotateByOrigin(double angle) {
-        Point start = new Point(x, y);
-        start.rotateByOrigin(angle);
-        this.x = start.getX();
-        this.y = start.getY();
+        a.rotateByOrigin(angle);
     }
 
     @Override
     public Rectangle clone() {
-        Rectangle copy = new Rectangle(x, y, width, height);
+        Rectangle copy = new Rectangle(a.getX(), a.getY(), width, height);
         return copy;
     }
 
     @Override
     public String toString() {
-        return "Rectangle at (" + x + ", " + y + "), width " + width + ", height " + height;
+        return "Rectangle at (" + a.getX() + ", " + a.getY() + "), width " + width + ", height " + height;
     }
 }
