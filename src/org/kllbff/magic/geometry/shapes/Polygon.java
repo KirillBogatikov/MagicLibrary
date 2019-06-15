@@ -11,6 +11,13 @@ import org.kllbff.magic.geometry.lines.LineSegment;
 import org.kllbff.magic.geometry.lines.StraightLine;
 import org.kllbff.magic.geometry.utils.VerticesComparator;
 
+/**
+ * <h3>Represents a free shape with three or more vertices - polygon</h3>
+ * 
+ * @author Kirill Bogatikov
+ * @version 1.0
+ * @since 1.0
+ */
 public class Polygon extends Shape {
     public static Polygon createConcavePolygon(double... coordinates) {
         Polygon p = new Polygon(false);
@@ -318,19 +325,8 @@ public class Polygon extends Shape {
     
     @Override
     public void rotate(double angle) {
-        double x0 = centerPoint.getX();
-        double y0 = centerPoint.getY();
-        
-        double cos = Math.cos(angle);
-        double sin = Math.sin(angle);
-        
-        double x, y;
         for(Point v : verticesList) {
-            x = v.getX();
-            y = v.getY();
-            
-            v.setX(x0 + (x - x0) * cos - (y - y0) * sin);
-            v.setY(y0 + (y - y0) * cos + (x - x0) * sin);   
+            v.rotateBy(angle, centerPoint);   
         }
     }
 
