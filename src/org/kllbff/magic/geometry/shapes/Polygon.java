@@ -200,54 +200,6 @@ public class Polygon extends Shape {
         
         return new LineSegment[]{ new LineSegment(last, vertex), new LineSegment(next, vertex) };
     }
-
-    @Override
-    public List<Point> getIntersectionPoints(Line line) {
-        List<Point> result = new ArrayList<>();
-        Point intersection;
-        for(LineSegment edge : getEdges()) {
-            intersection = line.getIntersection(edge);
-            if(intersection != null && !result.contains(intersection)) {
-                result.add(intersection);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public List<Polygon> getIntersectionAreas(Shape shape) {
-        ArrayList<Point> intersections = new ArrayList<>();        
-        LineSegment[] myEdges = getEdges();
-        Line[] itEdges = shape.getEdges();
-        for(LineSegment myEdge : myEdges) {
-            for(Line itEdge : itEdges) {
-                Point i = itEdge.getIntersection(myEdge);
-                if(i != null && !intersections.contains(i)) {
-                    intersections.add(i);
-                }
-            }
-        }
-        
-        ArrayList<Point> vertices = new ArrayList<>();
-        for(Point vertex : verticesList) {
-            if(shape.contains(vertex) && !vertices.contains(vertex) && !intersections.contains(vertex)) {
-                vertices.add(vertex);
-            }
-        }
-        for(Point vertex : shape.getVertices()) {
-            if(contains(vertex) && !vertices.contains(vertex) && !intersections.contains(vertex)) {
-                vertices.add(vertex);
-            }
-        }
-                
-        Polygon polygon = new Polygon(true);
-        polygon.addVertices(intersections.toArray(new Point[0]));
-        polygon.addVertices(vertices.toArray(new Point[0]));
-        
-        ArrayList<Polygon> result = new ArrayList<>();
-        result.add(polygon);
-        return result;
-    }
     
     public boolean isValid() {
         LineSegment[] edges = getEdges();

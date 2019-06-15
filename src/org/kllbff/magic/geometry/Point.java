@@ -212,7 +212,22 @@ public class Point implements Comparable<Point>, Primitive {
         this.y = ny;
     }
     
+    /**
+     * Rotates this point around specified point
+     * <p>New coordinates of point can be calculated as:<br>
+     *    <i>x = x<sub>0</sub> + (x - x<sub>0</sub>) * cos(&#945;) - (y - y<sub>0</sub>) * sin(&#945;)</i><br>
+     *    <i>y = y<sub>0</sub> + (y - y<sub>0</sub>) * sin(&#945;) - (x - x<sub>0</sub>) * cos(&#945;)</i><br> 
+     * </p>
+     *  
+     * @param angle specified angle, in radians
+     * @param point specified point, center of rotation
+     */
     public void rotateBy(double angle, Point point) {
+        angle = angle % (Math.PI * 2);
+        if(angle == 0 || angle == Math.PI * 2) {
+            return;
+        }
+        
         double x0 = point.getX();
         double y0 = point.getY();
         

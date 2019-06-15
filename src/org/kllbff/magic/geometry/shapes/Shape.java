@@ -1,10 +1,12 @@
 package org.kllbff.magic.geometry.shapes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kllbff.magic.geometry.Point;
 import org.kllbff.magic.geometry.PointPosition;
 import org.kllbff.magic.geometry.Primitive;
+import org.kllbff.magic.geometry.lines.BezierCurve;
 import org.kllbff.magic.geometry.lines.Line;
 
 /**
@@ -56,7 +58,23 @@ public abstract class Shape implements Primitive {
      * @param line specified line
      * @return list of intersection points with specified line, always not null
      */
-    public abstract List<Point> getIntersectionPoints(Line line);
+    public List<Point> getIntersectionPoints(Line line) {
+        List<Point> result = new ArrayList<>();
+        Point intersection;
+        for(Line edge : getEdges()) {
+            intersection = line.getIntersection(edge);
+            if(intersection != null && !result.contains(intersection)) {
+                result.add(intersection);
+                if(line instanceof BezierCurve) {
+                    intersection = ((BezierCurve)line).getIntersection(edge, 1);
+                    if(intersection != null && !result.contains(intersection)) {
+                        result.add(intersection);
+                    }
+                }
+            }
+        }
+        return result;
+    }
     
     /**
      * Checks if this shape has at least one intersection point with specified line
@@ -67,28 +85,6 @@ public abstract class Shape implements Primitive {
      */
     public boolean hasIntersection(Line line) {
         return getIntersectionPoints(line).size() > 0;
-    }
-    
-    /**
-     * Returns list of intersection areas between this shape and other specified shape
-     * <p>If shapes has not intersections, will be returned empty list.</p>
-     * <p>Any intersection area will be described by Shape class child</p> 
-     * <p>This method can throws {@link RuntimeException} if specified shape is equals this shape</p>
-     * 
-     * @param shape specified shape
-     * @return list of intersection areas between this shape and other specified shape
-     */
-    public abstract List<? extends Shape> getIntersectionAreas(Shape shape);
-    
-    /**
-     * Checks if this shape has at least one intersection area with specified other shape
-     * <p>As default, implemented by using checking {@link #getIntersectionAreas(Shape)} method's result list size.</p>
-     * 
-     * @param shape specified other shape
-     * @return true if shapes has at least one intersection area
-     */
-    public boolean hasIntersection(Shape shape) {
-        return getIntersectionAreas(shape).size() > 0;
     }
     
     /**

@@ -1,12 +1,7 @@
 package org.kllbff.magic.geometry.shapes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kllbff.magic.geometry.Point;
 import org.kllbff.magic.geometry.PointPosition;
-import org.kllbff.magic.geometry.lines.BezierCurve;
-import org.kllbff.magic.geometry.lines.Line;
 import org.kllbff.magic.geometry.lines.LineSegment;
 
 public class Rectangle extends Shape {
@@ -17,6 +12,38 @@ public class Rectangle extends Shape {
     public Rectangle(double x, double y, double width, double height) {
         this.a = new Point(x, y);
         this.width = width;
+        this.height = height;
+    }
+    
+    public double getX() {
+        return a.getX();
+    }
+    
+    public double getY() {
+        return a.getY();
+    }
+    
+    public void setX(double x) {
+        this.a.setX(x);
+    }
+    
+    public void setY(double y) {
+        this.a.setY(y);
+    }
+    
+    public double getWidth() {
+        return width;
+    }
+    
+    public double getHeight() {
+        return height;
+    }
+    
+    public void setWidth(double width) {
+        this.width = width;
+    }
+    
+    public void setHeight(double height) {
         this.height = height;
     }
     
@@ -31,7 +58,7 @@ public class Rectangle extends Shape {
 
     @Override
     public Point[] getVertices() {
-         Point center = new Point(a.getX() + width / 2, a.getY() + height / 2);
+         Point center = getCenterPoint();
          
          Point a1 = new Point(a.getX(), a.getY() + height);
          a1.rotateByOrigin(originAngle);
@@ -82,28 +109,6 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public List<Point> getIntersectionPoints(Line line) {
-        ArrayList<Point> intersections = new ArrayList<>();
-        LineSegment[] edges = getEdges();
-        for(LineSegment edge : edges) {
-            Point i = line.getIntersection(edge);
-            if(i != null) {
-                intersections.add(i);
-                if(line instanceof BezierCurve) {
-                    intersections.add(((BezierCurve)line).getSecondPoint());
-                }
-            }
-        }
-        return intersections;
-    }
-
-    @Override
-    public List<Polygon> getIntersectionAreas(Shape shape) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public PointPosition getPointPosition(Point point) {
         Point[] vertices = getVertices();
         for(Point vx : vertices) {
@@ -119,9 +124,11 @@ public class Rectangle extends Shape {
             }
         }        
         
-        double x = point.getX(), y = point.getY();
-        if(x > a.getX() && x < a.getX() + this.width && y > a.getY() && y < a.getY() + this.height) {
-            return PointPosition.INSIDE;
+        LineSegment line = new LineSegment(point, getCenterPoint());
+        for(LineSegment edge : edges) {
+            if(edge.hasIntersection(line)) {
+                return PointPosition.INSIDE;
+            }
         }
         
         return PointPosition.OUTSIDE;
