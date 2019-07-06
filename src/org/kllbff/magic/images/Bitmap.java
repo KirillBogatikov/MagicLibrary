@@ -9,7 +9,7 @@ public class Bitmap {
     private long[] pixels;
     private int width, height;
     
-    public Bitmap(long[] pixels, int width, int height) {
+    protected Bitmap(long[] pixels, int width, int height) {
         this.pixels = pixels;
         this.width = width;
         this.height = height;
