@@ -2,45 +2,38 @@ package org.kllbff.magic.graphics;
 
 import org.kllbff.magic.graphics.color.Color;
 
-public class Paint {
-    public static enum Type {
-        STROKE          (1),
-        FILL            (2);
-        
-        protected int flag;
-        private Type(int flag) {
-            this.flag = flag;
-        }
-    }
+public class Paint {    
+    public static final int STROKE = 1,
+                            FILL   = 2;
     
     private boolean antialiased;
     private long color;
-    private Type type;
+    private int type;
     
-    public Paint(long color, Type type) {
+    public Paint(long color, int type) {
         this.color = color;
         this.type = type;
         this.antialiased = true;
     }
     
     public Paint(long color) {
-        this(color, Type.STROKE);
+        this(color, STROKE);
     }
     
     public Paint() {
         this(Color.WHITE);
     }
     
-    public void setType(Type type) {
+    public void setType(int type) {
         this.type = type;
     }
     
     public boolean canFill() {
-        return (type.flag & 2) == 2;
+        return (type & 2) == 2;
     }
     
     public boolean hasStroke() {
-        return (type.flag & 1) == 1;
+        return (type & 1) == 1;
     }
     
     public long getColor() {
