@@ -1,6 +1,6 @@
 package org.kllbff.magic.exceptions;
 
-public class NotEnoughMemoryException extends Exception {
+public class NotEnoughMemoryException extends RuntimeException {
     private static final long serialVersionUID = 745641407191720389L;
 
     private long available, necessary;
