@@ -35,6 +35,11 @@ public class Canvas {
         this((new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)).createGraphics(), width, height);
     }
     
+    public void update() {
+        setPaint(paint);
+        setStroke(stroke);
+    }
+    
     public void setPaint(Paint paint) {
         this.paint = paint;
         
@@ -85,6 +90,7 @@ public class Canvas {
     }
     
     public void drawText(int x, int y, String text) {
+        graphics.setColor(fillColor);
         graphics.drawString(text, x, y);
     }
     
