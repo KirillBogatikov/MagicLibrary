@@ -24,9 +24,10 @@ import org.kllbff.magic.math.PlanimetryValues;
  * @version 1.0
  * @since 1.0
  */
-public class Point implements Comparable<Point>, Primitive {
+public class Point implements Comparable<Point> {
     private double distanceToStart;
     private double x, y;
+    private boolean mutable = true;
     
     /**
      * Default constructor
@@ -69,9 +70,14 @@ public class Point implements Comparable<Point>, Primitive {
      * Change point's current coordinate on the x-axis to given value
      * 
      * @param x point's x-axis position
+     * @throws RuntimeException if Point is immutable
      * @return reference to this object
      */
     public Point setX(double x) {
+        if(!mutable) {
+            throw new RuntimeException("Cannot change value of x-axis coordinate: " + this + " is immutable");
+        }
+        
         this.x = x;
         this.distanceToStart = distanceTo(0, 0);
         return this;
@@ -81,12 +87,21 @@ public class Point implements Comparable<Point>, Primitive {
      * Change point's current coordinate on the y-axis to given value
      * 
      * @param y point's y-axis position
+     * @throws RuntimeException if Poitn is immutable
      * @return reference to this object
      */
     public Point setY(double y) {
+        if(!mutable) {
+            throw new RuntimeException("Cannot change value of y-axis coordinate: " + this + " is immutable");
+        }
+        
         this.y = y;
         this.distanceToStart = distanceTo(0, 0);
         return this;
+    }
+    
+    public void setMutable(boolean mutable) {
+        this.mutable = true;
     }
     
     /**
@@ -190,14 +205,25 @@ public class Point implements Comparable<Point>, Primitive {
      * </code>
      * </pre>
      * </p>
+     * 
+     * @param x new value of x-axis coordinate
+     * @param y new value of y-axis coordinate
+     * @throws RuntimeException is Point is immutable
      */
-    @Override
     public void translate(double x, double y) {
+        if(!mutable) {
+            throw new RuntimeException("Cannot translate " + this + " to (" + x + ", " + y + "). Point is immutable");
+        }
+        
         this.x += x;
         this.y += y;
     }
     
-    @Override
+    /**
+     * Rotates Point relatively to origin (0, 0)
+     * 
+     * @param angle the angle at which you want to rotate the point, in radians
+     */
     public void rotateByOrigin(double angle) {
         angle = angle % (Math.PI * 2);
         if(angle == 0 || angle == Math.PI * 2) {
