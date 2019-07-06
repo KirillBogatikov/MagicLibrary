@@ -5,18 +5,18 @@ import org.kllbff.magic.graphics.color.Color;
 public class DottedStroke extends Stroke {
     private int[] spaces;
 
-    public DottedStroke(int width, long color, CapType cap, JoinType join) {
-        super(width, color, cap, join);
+    public DottedStroke(long color, int width, CapType cap, JoinType join) {
+        super(color, width, cap, join);
         
         spaces = new int[]{ width };
     }
     
-    public DottedStroke(int width, long color) {
-        this(width, color, CapType.BUTT, JoinType.BEVEL);
+    public DottedStroke(long color, int width) {
+        this(color, width, CapType.BUTT, JoinType.BEVEL);
     }
     
     public DottedStroke(int width) {
-        this(width, Color.WHITE);
+        this(Color.WHITE, width);
     }
     
     public void setCapType(CapType cap) {

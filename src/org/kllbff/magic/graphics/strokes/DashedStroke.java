@@ -5,19 +5,19 @@ import org.kllbff.magic.graphics.color.Color;
 public class DashedStroke extends Stroke {
     private int[] dashWidth, dashSpace;
     
-    public DashedStroke(int width, long color, CapType cap, JoinType join) {
-        super(width, color, cap, join);
+    public DashedStroke(long color, int width, CapType cap, JoinType join) {
+        super(color, width, cap, join);
         
         dashWidth = new int[]{ width * 2 };
         dashSpace = new int[]{ width * 2 };
     }
     
-    public DashedStroke(int width, long color) {
-        this(width, color, CapType.ROUND, JoinType.ROUND);
+    public DashedStroke(long color, int width) {
+        this(color, width, CapType.ROUND, JoinType.ROUND);
     }
     
     public DashedStroke(int width) {
-        this(width, Color.WHITE);
+        this(Color.WHITE, width);
     }
     
     public void setDashWidth(int... dashWidth) {

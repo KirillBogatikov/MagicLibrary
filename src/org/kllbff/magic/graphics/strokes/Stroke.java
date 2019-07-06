@@ -18,7 +18,7 @@ public abstract class Stroke {
     protected CapType cap;
     protected JoinType join;
     
-    public Stroke(int width, long color, CapType cap, JoinType join) {
+    public Stroke(long color, int width, CapType cap, JoinType join) {
         this.width = width;
         this.color = color;
         this.cap = cap;
