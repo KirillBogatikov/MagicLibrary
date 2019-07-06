@@ -26,6 +26,7 @@ public class Canvas {
     
     public Canvas(Graphics2D awtGraphics, int width, int height) {
         this.graphics = awtGraphics;
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         setPaint(new Paint());
         setStroke(new SolidStroke(5));
     }
@@ -117,7 +118,7 @@ public class Canvas {
     public void drawRoundRectangle(int x, int y, int width, int height, int arcWidth, int arcHeight) {
         if(paint.canFill()) {
             graphics.setColor(fillColor);
-            graphics.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
+            graphics.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
         }
         if(paint.hasStroke()) {
             graphics.setColor(strokeColor);
