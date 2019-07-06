@@ -260,7 +260,7 @@ public class Point implements Comparable<Point> {
         double cos = PlanimetryValues.cos(angle), sin = PlanimetryValues.sin(angle);
                 
         double nx = x0 + (x - x0) * cos - (y - y0) * sin;
-        double ny = y0 + (y - y0) * sin + (x - x0) * cos;   
+        double ny = y0 + (y - y0) * cos + (x - x0) * sin;   
         
         this.x = nx;
         this.y = ny;
