@@ -18,7 +18,7 @@ public class ColorInterpolator {
         r1 = Color.red(start);
         g1 = Color.green(start);
         b1 = Color.blue(start);
-
+        
         this.end = end;
         end = ColorsConverter.toRGB(end);
         a2 = Color.alpha(end);
