@@ -49,7 +49,7 @@ public final class ColorsConverter {
         double y = r * 0.2126 + g * 0.7152 + b * 0.0722;
         double z = r * 0.0193 + g * 0.1192 + b * 0.9505;
         
-        return Color.parseXYZ(x, y, z, Color.alpha(color));
+        return Color.xyz(x, y, z, Color.alpha(color));
     }
     
     private static double fRGBtoXYZ(double c) {
@@ -78,7 +78,7 @@ public final class ColorsConverter {
         g = fXYZtoRGB(g);
         b = fXYZtoRGB(b);
                 
-        return Color.parseRGBA((int)r, (int)g, (int)b, Color.alpha(color));
+        return Color.rgba((int)r, (int)g, (int)b, Color.alpha(color));
     }
     
     private static double fXYZtoRGB(double c) {
@@ -104,7 +104,7 @@ public final class ColorsConverter {
         double a = 500 * (x - y);
         double b = 200 * (y - z);
                 
-        return Color.parseCIELab((int)l, (int)a, (int)b, Color.alpha(color));
+        return Color.cieLab((int)l, (int)a, (int)b, Color.alpha(color));
     }
     
     private static double fLABtXYZ(double p) {
@@ -129,7 +129,7 @@ public final class ColorsConverter {
         y = oXYZ(y);
         z = oXYZ(z);
         
-        return Color.parseXYZ(95.047 * x, 100 * y, 108.883 * z, Color.alpha(color));
+        return Color.xyz(95.047 * x, 100 * y, 108.883 * z, Color.alpha(color));
     }
     
     private static double oXYZ(double p) {
@@ -176,7 +176,7 @@ public final class ColorsConverter {
         saturation *= 100;
         brightness *= 100;
         
-        return Color.parseHSB((int)hue, (int)saturation, (int)brightness, Color.alpha(color));
+        return Color.hsb((int)hue, (int)saturation, (int)brightness, Color.alpha(color));
     }
     
     public static long convertHSBtoRGB(long color) {
@@ -222,6 +222,6 @@ public final class ColorsConverter {
         green *= 255;
         blue *= 255;
         
-        return Color.parseRGBA((int)red, (int)green, (int)blue, Color.alpha(color));
+        return Color.rgba((int)red, (int)green, (int)blue, Color.alpha(color));
     }
 }

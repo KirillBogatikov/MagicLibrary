@@ -4,14 +4,14 @@ import static org.kllbff.magic.math.DigitsRounder.round;
 import org.kllbff.magic.exceptions.IncorrectColorException;
 
 public final class Color {
-    public static final long WHITE = parseHex("#FFFFFF");
-    public static final long BLACK = parseHex("#000000");
-    public static final long BLUE = parseHex("#0000FF");
-    public static final long GREEN = parseHex("#00FF00");
-    public static final long RED = parseHex("#FF0000");
-    public static final long YELLOW = parseHex("#FFFF00");
-    public static final long PURPLE = parseHex("#FF00FF");
-    public static final long CYAN = parseHex("#00FFFF");
+    public static final long WHITE = hex("#FFFFFF");
+    public static final long BLACK = hex("#000000");
+    public static final long BLUE = hex("#0000FF");
+    public static final long GREEN = hex("#00FF00");
+    public static final long RED = hex("#FF0000");
+    public static final long YELLOW = hex("#FFFF00");
+    public static final long PURPLE = hex("#FF00FF");
+    public static final long CYAN = hex("#00FFFF");
     
     public static ColorSpace colorSpace(long color) {        
         return ColorSpace.forFlag(colorSpaceFlag(color));
@@ -21,7 +21,7 @@ public final class Color {
         return color >> 56;
     }
     
-    public static long parseHex(String hex) {
+    public static long hex(String hex) {
         if(hex.length() < 4) {
             throw new IncorrectColorException("Minimal length of HEX Color string is 4 symbols: #RGB");
         }
@@ -63,14 +63,14 @@ public final class Color {
             } break;
         }
         
-        return Color.parseRGBA(r, g, b, a);
+        return Color.rgba(r, g, b, a);
     }
     
-    public static long parseRGB(int r, int g, int b) {
-        return parseRGBA(r, g, b, 0xFF);
+    public static long rgb(int r, int g, int b) {
+        return rgba(r, g, b, 0xFF);
     }
     
-    public static long parseRGBA(int r, int g, int b, long a) {
+    public static long rgba(int r, int g, int b, long a) {
         a &= 0xFF;
         r &= 0xFF;
         g &= 0xFF;
@@ -95,11 +95,11 @@ public final class Color {
         return (int)(color & 0xFF);
     }
     
-    public static long parseCMYK(int c, int m, int y, int k) {
-        return parseCMYK(c, m, y, k, 0xFF);
+    public static long cmyk(int c, int m, int y, int k) {
+        return cmyk(c, m, y, k, 0xFF);
     }
     
-    public static long parseCMYK(int c, int m, int y, int k, long a) {
+    public static long cmyk(int c, int m, int y, int k, long a) {
         a = a & 0xFF;
         c &= 0xFF;
         m &= 0xFF;
@@ -124,11 +124,11 @@ public final class Color {
         return (int)(color & 0xFF);
     }
     
-    public static long parseHSB(int h, int s, int b) {
-        return parseHSB(h, s, b, 0xFF);
+    public static long hsb(int h, int s, int b) {
+        return hsb(h, s, b, 0xFF);
     }
     
-    public static long parseHSB(int h, int s, int b, long a) {
+    public static long hsb(int h, int s, int b, long a) {
         a &= 0xFF;
         h &= 0xFF;
         s &= 0xFF;
@@ -148,11 +148,11 @@ public final class Color {
         return (int)(color & 0xFF);
     }
     
-    public static long parseCIELab(int l, int a, int b) {
-        return parseCIELab(l, a, b, 0xFF);
+    public static long cieLab(int l, int a, int b) {
+        return cieLab(l, a, b, 0xFF);
     }
     
-    public static long parseCIELab(int l, int a, int b, long alpha) {
+    public static long cieLab(int l, int a, int b, long alpha) {
         alpha &= 0xFF;
         l &= 0x1FF;
         a = (a < 0 ? 0b100000000 : 0) | (a & 0xFF);
@@ -175,11 +175,11 @@ public final class Color {
         return (int)((color & 0xFF) - (n == 1 ? 256 : 0));
     }
     
-    public static long parseXYZ(double x, double y, double z) {
-        return parseXYZ(x, y, z, 0xFF);
+    public static long xyz(double x, double y, double z) {
+        return xyz(x, y, z, 0xFF);
     }
     
-    public static long parseXYZ(double x, double y, double z, long a) {
+    public static long xyz(double x, double y, double z, long a) {
         a &= 0xFF;
         long xl = (long)(x * 682.5) & 0xFFFF;
         long yl = (long)(y * 655.3) & 0xFFFF;

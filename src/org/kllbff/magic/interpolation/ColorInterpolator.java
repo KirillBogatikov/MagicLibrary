@@ -69,7 +69,7 @@ public class ColorInterpolator {
         int newG = clip(basic.interpolate(g1, g2, t));
         int newB = clip(basic.interpolate(b1, b2, t));
 
-        return Color.parseRGBA(newR, newG, newB, newA); 
+        return Color.rgba(newR, newG, newB, newA); 
     }
 
     private int clip(double num) {

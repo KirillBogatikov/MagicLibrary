@@ -82,7 +82,7 @@ public class BitmapFactory {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = (rgb & 0xFF);
-                bitmap.setPixel(x, y, Color.parseRGBA(r, g, b, a));
+                bitmap.setPixel(x, y, Color.rgba(r, g, b, a));
             }
         }
         
