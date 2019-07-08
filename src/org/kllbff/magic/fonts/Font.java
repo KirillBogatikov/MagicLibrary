@@ -6,14 +6,15 @@ public class Font {
     public static final int STYLE_PLAIN = 0,
                             STYLE_ITALIC = 1,
                             STYLE_BOLD   = 2;
+    public static final int DEFAULT_SIZE = 16;
     
     public java.awt.Font plain, italic, bold, boldItalic;
     private java.awt.Font current;
     private int style;
     
     Font(java.awt.Font plain) {
-        this.plain = plain;
-        this.current = plain;
+        this.plain = plain.deriveFont((float)DEFAULT_SIZE);
+        this.current = this.plain;
         this.style = STYLE_PLAIN;
     }
     
@@ -102,7 +103,7 @@ public class Font {
     }
     
     public Font clone() {
-        return new Font(plain.deriveFont(1.0f));
+        return new Font(plain.deriveFont((float)DEFAULT_SIZE));
     }
     
     public java.awt.Font toAWT() {
