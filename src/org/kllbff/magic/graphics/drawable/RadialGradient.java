@@ -31,7 +31,7 @@ public class RadialGradient extends Drawable {
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 double t = new Point(width / 2, height / 2).distanceTo(x, y);
-                long color = colorInterpolator.interpolate(t / width * 2.0);
+                long color = colorInterpolator.interpolate(t / width * 2.075);
                 bitmap.setPixel(x, y, color);
             }
         }
