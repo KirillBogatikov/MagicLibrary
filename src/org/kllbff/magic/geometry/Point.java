@@ -21,12 +21,12 @@ import org.kllbff.magic.math.PlanimetryValues;
  *     sorting methods on sequence of points</p> 
  * 
  * @author Kirill Bogatikov
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public class Point implements Comparable<Point> {
     private double distanceToStart;
-    private double x, y;
+    private int x, y;
     private boolean mutable = true;
     
     /**
@@ -43,9 +43,32 @@ public class Point implements Comparable<Point> {
      * @param x point's coordinate on the x-axis
      * @param y point's coordinate on the y-axis
      */
-    public Point(double x, double y) {
+    public Point(int x, int y) {
         setX(x);
         setY(y);
+    }
+    
+    /**
+     * Initializes point by given coordinates
+     * 
+     * @param x point's coordinate on the x-axis
+     * @param y point's coordinate on the y-axis
+     */
+    public Point(double x, double y) {
+        this((int)x, (int)y);
+    }
+    
+    /**
+     * Initializes point by given coordinates
+     * 
+     * @param x point's coordinate on the x-axis
+     * @param y point's coordinate on the y-axis
+     * @param mutable if false you can not change coordinates of this point
+     */
+    public Point(int x, int y, boolean mutable) {
+        setX(x);
+        setY(y);
+        this.mutable = mutable;
     }
     
     /**
@@ -53,7 +76,7 @@ public class Point implements Comparable<Point> {
      * 
      * @return point's current coordinate on the x-axis 
      */
-    public double getX() {
+    public int getX() {
         return x;
     }
     
@@ -62,7 +85,7 @@ public class Point implements Comparable<Point> {
      * 
      * @return point's current coordinate on the y-axis 
      */
-    public double getY() {
+    public int getY() {
         return y;
     }
     
@@ -73,13 +96,14 @@ public class Point implements Comparable<Point> {
      * @throws RuntimeException if Point is immutable
      * @return reference to this object
      */
-    public Point setX(double x) {
+    public Point setX(int x) {
         if(!mutable) {
             throw new RuntimeException("Cannot change value of x-axis coordinate: " + this + " is immutable");
         }
         
         this.x = x;
         this.distanceToStart = distanceTo(0, 0);
+        
         return this;
     }
     
@@ -90,13 +114,14 @@ public class Point implements Comparable<Point> {
      * @throws RuntimeException if Poitn is immutable
      * @return reference to this object
      */
-    public Point setY(double y) {
+    public Point setY(int y) {
         if(!mutable) {
             throw new RuntimeException("Cannot change value of y-axis coordinate: " + this + " is immutable");
         }
         
         this.y = y;
         this.distanceToStart = distanceTo(0, 0);
+        
         return this;
     }
     
@@ -121,7 +146,7 @@ public class Point implements Comparable<Point> {
      * @param y y-axis coordinate of point, distance to which will be computed
      * @return distance between two points - this and given
      */
-    public double distanceTo(double x, double y) {
+    public double distanceTo(int x, int y) {
         return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
     }
     
@@ -145,11 +170,8 @@ public class Point implements Comparable<Point> {
     @Override
     public int hashCode() {
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(x);
-        result = 37 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = 37 * result + (int) (temp ^ (temp >>> 32));
+        result = 37 * result + (int) (x ^ (x >>> 32));
+        result = 37 * result + (int) (y ^ (y >>> 32));
         return result;
     }
     
@@ -210,13 +232,13 @@ public class Point implements Comparable<Point> {
      * @param y new value of y-axis coordinate
      * @throws RuntimeException is Point is immutable
      */
-    public void translate(double x, double y) {
+    public void translate(int x, int y) {
         if(!mutable) {
             throw new RuntimeException("Cannot translate " + this + " to (" + x + ", " + y + "). Point is immutable");
         }
         
-        this.x += x;
-        this.y += y;
+        setX(this.x + x);
+        setY(this.y + y);
     }
     
     /**
@@ -225,17 +247,7 @@ public class Point implements Comparable<Point> {
      * @param angle the angle at which you want to rotate the point, in radians
      */
     public void rotateByOrigin(double angle) {
-        angle = angle % (Math.PI * 2);
-        if(angle == 0 || angle == Math.PI * 2) {
-            return;
-        }
-        
-        double cos = PlanimetryValues.cos(angle), sin = PlanimetryValues.sin(angle);
-        double nx = x * cos - y * sin;
-        double ny = x * sin + y * cos;
-        
-        this.x = nx;
-        this.y = ny;
+        rotateBy(angle, new Point(0, 0));
     }
     
     /**
@@ -259,11 +271,11 @@ public class Point implements Comparable<Point> {
         
         double cos = PlanimetryValues.cos(angle), sin = PlanimetryValues.sin(angle);
                 
-        double nx = x0 + (x - x0) * cos - (y - y0) * sin;
-        double ny = y0 + (y - y0) * cos + (x - x0) * sin;   
+        int nx = (int)(x0 + (x - x0) * cos - (y - y0) * sin);
+        int ny = (int)(y0 + (y - y0) * cos + (x - x0) * sin);   
         
-        this.x = nx;
-        this.y = ny;
+        setX(nx);
+        setY(ny);
     }
     
     /**
