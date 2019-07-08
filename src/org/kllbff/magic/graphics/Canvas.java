@@ -2,11 +2,16 @@ package org.kllbff.magic.graphics;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import org.kllbff.magic.fonts.Font;
+import org.kllbff.magic.geometry.Area;
+import org.kllbff.magic.geometry.Ellipse;
+import org.kllbff.magic.geometry.Polygon;
+import org.kllbff.magic.geometry.Rectangle;
+import org.kllbff.magic.geometry.RoundRectangle;
+import org.kllbff.magic.geometry.Shape;
 import org.kllbff.magic.graphics.color.Color;
 import org.kllbff.magic.graphics.color.ColorsConverter;
 import org.kllbff.magic.graphics.strokes.SolidStroke;
@@ -33,6 +38,7 @@ public class Canvas {
         setPaint(new Paint());
         setStroke(new SolidStroke(5));
         setTextColor(Color.BLACK);
+        clearClip();
     }
     
     public Canvas(int width, int height) {
@@ -117,19 +123,53 @@ public class Canvas {
         graphics.drawString(text, x, y);
     }
     
+    public void setClip(Shape shape) {
+        graphics.setClip(shape.toAWT());
+    }
+    
+    public void addClip(Shape shape) {
+        Area area = new Area(getClip());
+        area.add(shape);
+        graphics.setClip(area.toAWT());
+    }
+    
+    public Shape getClip() {
+        java.awt.Shape shape = graphics.getClip();
+        if(shape instanceof java.awt.Rectangle) {
+            return new Rectangle(shape);
+        }
+        if(shape instanceof java.awt.geom.RoundRectangle2D) {
+            return new RoundRectangle(shape);
+        }
+        if(shape instanceof java.awt.geom.Ellipse2D) {
+            return new Ellipse(shape);
+        }
+        if(shape instanceof java.awt.Polygon) {
+            return new Polygon(shape);
+        }
+        if(shape instanceof java.awt.geom.Area) {
+            return new Area(shape);
+        }
+        return null;
+    }
+    
+    public void clearClip() {
+        graphics.setClip(null);
+    }
+    
     public void drawTriangle(int x, int y, int x1, int y1, int x2, int y2) {
         Polygon polygon = new Polygon();
-        polygon.addPoint(x, y);
-        polygon.addPoint(x1, y1);
-        polygon.addPoint(x2, y2);
+        polygon.add(x, y);
+        polygon.add(x1, y1);
+        polygon.add(x2, y2);
         
         if(paint.canFill()) {
             graphics.setColor(fillColor);
-            graphics.fill(polygon);
+            graphics.fill(polygon.toAWT());
         }
         if(paint.hasStroke()) {
             graphics.setColor(strokeColor);
-            graphics.drawPolygon(polygon);
+            graphics.drawPolygon(polygon.toAWT());
         }
     }
     
@@ -169,16 +209,16 @@ public class Canvas {
     public void drawPolygon(int... coordinates) {
         Polygon polygon = new Polygon();
         for(int i = 0; i < coordinates.length; i += 2) {
-            polygon.addPoint(coordinates[i], coordinates[i + 1]);
+            polygon.add(coordinates[i], coordinates[i + 1]);
         }
         
         if(paint.canFill()) {
             graphics.setColor(fillColor);
-            graphics.fillPolygon(polygon);
+            graphics.fillPolygon(polygon.toAWT());
         }
         if(paint.hasStroke()) {
             graphics.setColor(strokeColor);
-            graphics.drawPolygon(polygon);
+            graphics.drawPolygon(polygon.toAWT());
         }
     }
     
