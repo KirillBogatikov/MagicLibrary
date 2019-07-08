@@ -6,6 +6,7 @@ import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import org.kllbff.magic.fonts.Font;
 import org.kllbff.magic.graphics.color.Color;
 import org.kllbff.magic.graphics.color.ColorsConverter;
 import org.kllbff.magic.graphics.strokes.SolidStroke;
@@ -15,7 +16,9 @@ import org.kllbff.magic.images.Bitmap;
 public class Canvas {
     private BufferedImage image = null;
     private Graphics2D graphics = null;
-    private java.awt.Color fillColor, strokeColor;
+    private Font font;
+    private long textColor;
+    private java.awt.Color fillColor, strokeColor, awtTextColor;
     private Paint paint;
     private Stroke stroke;
     
@@ -29,6 +32,7 @@ public class Canvas {
         graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         setPaint(new Paint());
         setStroke(new SolidStroke(5));
+        setTextColor(Color.BLACK);
     }
     
     public Canvas(int width, int height) {
@@ -38,6 +42,25 @@ public class Canvas {
     public void update() {
         setPaint(paint);
         setStroke(stroke);
+    }
+    
+    public void setFont(Font font) {
+        this.font = font;
+        graphics.setFont(font.toAWT());
+    }
+    
+    public Font getFont() {
+        return font;
+    }
+    
+    public void setTextColor(long color) {
+        this.textColor = color;
+        color = ColorsConverter.toRGB(color);
+        awtTextColor = new java.awt.Color(Color.red(color), Color.green(color), Color.blue(color), Color.alpha(color));
+    }
+    
+    public long getTextColor() {
+        return textColor;
     }
     
     public void setPaint(Paint paint) {
@@ -90,7 +113,7 @@ public class Canvas {
     }
     
     public void drawText(int x, int y, String text) {
-        graphics.setColor(fillColor);
+        graphics.setColor(awtTextColor);
         graphics.drawString(text, x, y);
     }
     
