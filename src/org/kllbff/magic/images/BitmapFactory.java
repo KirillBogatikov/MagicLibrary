@@ -1,5 +1,7 @@
 package org.kllbff.magic.images;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -14,11 +16,17 @@ import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.graphics.color.Color;
+import org.kllbff.magic.graphics.color.ColorsConverter;
 
 /*
  * FIXME using Commons Imaging is bad idea: not all needed formats fully supported
+ * FIXME using Java AWT framework is bad idea: magic must have independency
  */
 public class BitmapFactory {
+    public static enum ScaleType {
+        FAST, SMOOTH, REPLICATE, AREA_AVERAGE
+    }
+    
     private static BufferedInputStream bufferize(InputStream input) {
         if(input instanceof BufferedInputStream) {
             return (BufferedInputStream)input;
@@ -82,6 +90,7 @@ public class BitmapFactory {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = (rgb & 0xFF);
+                
                 bitmap.setPixel(x, y, Color.rgba(r, g, b, a));
             }
         }
@@ -115,5 +124,78 @@ public class BitmapFactory {
         } catch(ImageWriteException e) {
             throw new ParsingException(e);
         }
+    }
+    
+    public static Bitmap cut(Bitmap src, int ox, int oy, int width, int height) {
+        if(src.getWidth() < (width + ox)) {
+            throw new RuntimeException("Can not cut a piece of bitmap: width + x (" + (width + ox) + " greater than source bitmap width: " + src.getWidth());
+        }
+        if(src.getHeight() < (height + oy)) {
+            throw new RuntimeException("Can not cut a piece of bitmap: height + y (" + (height + oy) + " greater than source bitmap height: " + src.getHeight());
+        }
+        
+        Bitmap target = new Bitmap(width, height);
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                target.setPixel(x, y, src.getPixel(ox + x, oy + y));
+            }
+        }
+        return target;
+    }
+    
+    public static Bitmap scale(Bitmap src, int newWidth, int newHeight, ScaleType scaleType) {
+        if(newWidth < 0 || newHeight < 0) {
+            throw new RuntimeException("Cannot scale image to negative width (" + newWidth + "px) or height (" + newHeight + "px)");
+        }
+        if(src.getWidth() == newWidth && src.getHeight() == newHeight) {
+            return src.copy();
+        }
+        
+        int scaleFlag = BufferedImage.SCALE_DEFAULT;
+        if(scaleType != null) {
+            switch(scaleType) {
+                case SMOOTH: scaleFlag = BufferedImage.SCALE_SMOOTH; break;
+                case REPLICATE: scaleFlag = BufferedImage.SCALE_REPLICATE; break;
+                case AREA_AVERAGE: scaleFlag = BufferedImage.SCALE_AREA_AVERAGING; break;
+                case FAST: scaleFlag = BufferedImage.SCALE_FAST;
+            }
+        }
+        
+        Image image = BitmapFactory.toAWT(src);
+        image = image.getScaledInstance(newWidth, newHeight, scaleFlag);
+        BufferedImage bufImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics graphics = bufImage.getGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+        return fromAWT(bufImage);
+    }
+    
+    public static Bitmap fromAWT(BufferedImage image) {
+        Bitmap bmp = new Bitmap(image.getWidth(null), image.getHeight(null));
+        int color, red, green, blue, alpha;
+        for(int x = 0; x < bmp.getWidth(); x++) {
+            for(int y = 0; y < bmp.getHeight(); y++) {
+                color = image.getRGB(x, y);
+                alpha = (color >>> 24) & 0xFF;
+                red = (color >> 16) & 0xFF;
+                green = (color >> 8) & 0xFF;
+                blue = color & 0xFF;
+                
+                bmp.setPixel(x, y, Color.rgba(red, green, blue, alpha));
+            }
+        }
+        return bmp;
+    }
+    
+    public static BufferedImage toAWT(Bitmap bmp) {
+        BufferedImage img = new BufferedImage(bmp.getWidth(), bmp.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        for(int x = 0; x < bmp.getWidth(); x++) {
+            for(int y = 0; y < bmp.getHeight(); y++) {
+                long px = ColorsConverter.toRGB(bmp.getPixel(x, y));                
+                int color = ((int)px) | (Color.alpha(px) << 24); 
+                img.setRGB(x, y, color);
+            }
+        }
+        return img;
     }
 }
