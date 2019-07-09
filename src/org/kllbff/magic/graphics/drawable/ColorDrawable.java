@@ -3,7 +3,7 @@ package org.kllbff.magic.graphics.drawable;
 import org.kllbff.magic.graphics.Canvas;
 import org.kllbff.magic.graphics.Paint;
 
-public class ColorDrawable extends Drawable {
+public class ColorDrawable implements Drawable {
     private Paint myPaint;
     private int x, y, w, h;
     

@@ -7,7 +7,7 @@ import org.kllbff.magic.interpolation.ColorInterpolator;
 import org.kllbff.magic.interpolation.Interpolator;
 import org.kllbff.magic.interpolation.LinearInterpolator;
 
-public class LinearGradient extends Drawable {
+public class LinearGradient implements Drawable {
     private ColorInterpolator colorInterpolator;
     private Bitmap bitmap;
     private double angle;
