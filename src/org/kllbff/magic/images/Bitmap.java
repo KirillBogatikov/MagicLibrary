@@ -39,7 +39,7 @@ public class Bitmap {
         return pixels;
     }
     
-    public Bitmap copy(int width, int height) throws NotEnoughMemoryException {
+    public Bitmap copy() throws NotEnoughMemoryException {
         return new Bitmap(Arrays.copyOf(pixels, width * height), width, height);
     }
 }
