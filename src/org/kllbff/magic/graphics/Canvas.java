@@ -17,9 +17,10 @@ import org.kllbff.magic.graphics.color.ColorsConverter;
 import org.kllbff.magic.graphics.strokes.SolidStroke;
 import org.kllbff.magic.graphics.strokes.Stroke;
 import org.kllbff.magic.images.Bitmap;
+import org.kllbff.magic.images.BitmapFactory;
 
 public class Canvas {
-    private BufferedImage image = null;
+    //private BufferedImage image = null;
     private Graphics2D graphics = null;
     private Font font;
     private long textColor;
@@ -29,7 +30,7 @@ public class Canvas {
     
     public Canvas(Bitmap bitmap) {
         this(bitmap.getWidth(), bitmap.getHeight());
-        copy(bitmap, image);
+        //image = BitmapFactory.toAWT(bitmap);
     }
     
     public Canvas(Graphics2D awtGraphics, int width, int height) {
@@ -234,23 +235,12 @@ public class Canvas {
     }
     
     public void drawBitmap(int x, int y, Bitmap bitmap) {
-        BufferedImage image = new BufferedImage(bitmap.getWidth(), bitmap.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        copy(bitmap, image);
+        BufferedImage image = BitmapFactory.toAWT(bitmap);
         graphics.drawImage(image, x, y, bitmap.getWidth(), bitmap.getHeight(), null);
     }
     
     public Graphics2D getGraphics() {
         return graphics;
-    }
-    
-    private void copy(Bitmap bmp, BufferedImage img) {
-        for(int x = 0; x < bmp.getWidth(); x++) {
-            for(int y = 0; y < bmp.getHeight(); y++) {
-                long px = ColorsConverter.toRGB(bmp.getPixel(x, y));
-                int color = ((int)px) | (Color.alpha(px) << 24); 
-                img.setRGB(x, y, color);
-            }
-        }
     }
     
     private java.awt.Color toAWTColor(long color) {
