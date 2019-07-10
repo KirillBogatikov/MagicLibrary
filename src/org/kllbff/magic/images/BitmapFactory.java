@@ -22,7 +22,24 @@ import org.kllbff.magic.graphics.color.ColorsConverter;
  * FIXME using Commons Imaging is bad idea: not all needed formats fully supported
  * FIXME using Java AWT framework is bad idea: magic must have independency
  */
+
+/**
+ * <p>Allows you to read the image from the input stream, get information about
+ *    the image from the same stream, save the image to the output stream, cut
+ *    out part of the image, scale the image</p>
+ * 
+ * @author Kirill Bogatikov
+ * @version 1.0
+ * @since 1.0
+ */
 public class BitmapFactory {
+    /**
+     * <h3>Enumaration of supported scaling type</h3>
+     * 
+     * @author Kirill Bogatikov
+     * @version 1.0
+     * @since 1.0
+     */
     public static enum ScaleType {
         FAST, SMOOTH, REPLICATE, AREA_AVERAGE
     }
@@ -34,6 +51,15 @@ public class BitmapFactory {
         return new BufferedInputStream(input);
     }
     
+    /**
+     * Returns BitmapInfo, containing information about image, represented by byte array from specified input stream
+     * <p><b>Warning!</b> It method does not close input stream. You must do it manually after call of this method</p>
+     * 
+     * @param input stream for image file
+     * @return BitmapInfo about image file
+     * @throws IOException if caused exception at read data
+     * @throws ParsingException if image file does not correct
+     */
     @SuppressWarnings("resource")
     public static BitmapInfo readInfo(InputStream input) throws IOException {
         ImageInfo info;
@@ -67,6 +93,17 @@ public class BitmapFactory {
         return new BitmapInfo(info.getWidth(), info.getHeight(), info.getBitsPerPixel(), info.getComments(), myFormat);
     }
     
+    /**
+     * Returns Bitmap, containing image, read from specified input stream
+     * <p><b>Warning!</b> It method does not close input stream. You must do it manually after call of this method</p>
+     * <p>Pixels in given bitmap will be storing as sRGB color space</p>
+     * 
+     * @param input input stream
+     * @param info already read bitmap info or null, if you does not read it
+     * @return Bitmap read and decoded from input stream
+     * @throws IOException if caused exception at read data
+     * @throws ParsingException if image file does not correct
+     */
     @SuppressWarnings("resource")
     public static Bitmap readBitmap(InputStream input, BitmapInfo info) throws IOException {
         BufferedImage image;
@@ -98,6 +135,15 @@ public class BitmapFactory {
         return bitmap;
     }
     
+    /**
+     * Compress given bitmap to specified format and write it to output stream
+     *  
+     * @param bitmap image
+     * @param output target OutputStream
+     * @param format target compress format, one of {@link StorageFormats}
+     * @throws IOException  if caused exception at read data
+     * @throws ParsingException if image file does not correct
+     */
     public static void writeBitmap(Bitmap bitmap, OutputStream output, StorageFormats format) throws IOException {
         BufferedImage image = new BufferedImage(bitmap.getWidth(), bitmap.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for(int x = 0; x < bitmap.getWidth(); x++) {
@@ -126,6 +172,18 @@ public class BitmapFactory {
         }
     }
     
+    /**
+     * Returns Bitmap, cutted from specified source bitmap at specified region 
+     * <p>Region specified by rectangular shape: x and y coordinates of left top corner and width/height parameters</p>
+     * 
+     * @param src source bitmap
+     * @param ox x-axis coordinate of cut region
+     * @param oy y-axis coordinate of cut region
+     * @param width width of cut region
+     * @param height height of cut region
+     * @return Bitmap, cutted from specified source bitmap at specified region 
+     * @throws RuntimeException if specified widht or height + offset point is greater than size of source image
+     */
     public static Bitmap cut(Bitmap src, int ox, int oy, int width, int height) {
         if(src.getWidth() < (width + ox)) {
             throw new RuntimeException("Can not cut a piece of bitmap: width + x (" + (width + ox) + " greater than source bitmap width: " + src.getWidth());
@@ -143,6 +201,15 @@ public class BitmapFactory {
         return target;
     }
     
+    /**
+     * Returns copy of source bitmap, scaled to specified size and by specified Scaling Algorithm
+     * 
+     * @param src source bitmap
+     * @param newWidth width of scaled image
+     * @param newHeight height of scaled image
+     * @param scaleType one of {@link ScaleType} enum
+     * @return copy of source bitmap, scaled to specified size and by specified Scaling Algorithm
+     */
     public static Bitmap scale(Bitmap src, int newWidth, int newHeight, ScaleType scaleType) {
         if(newWidth < 0 || newHeight < 0) {
             throw new RuntimeException("Cannot scale image to negative width (" + newWidth + "px) or height (" + newHeight + "px)");
@@ -170,6 +237,13 @@ public class BitmapFactory {
         return fromAWT(bufImage);
     }
     
+    /**
+     * Returns Bitmap instance, builded from given AWT BufferedImage
+     * <p>Bitmap will have same dimensions and pixels as BufferedImage</p>
+     * 
+     * @param image exists AWT BufferedImage instance
+     * @return Bitmap instance, builded from given AWT BufferedImage
+     */
     public static Bitmap fromAWT(BufferedImage image) {
         Bitmap bmp = new Bitmap(image.getWidth(null), image.getHeight(null));
         int color, red, green, blue, alpha;
@@ -187,6 +261,13 @@ public class BitmapFactory {
         return bmp;
     }
     
+    /**
+     * Returns AWT BufferedImage instance, builded from Bitmap
+     * <p>BufferedImage will have same dimensions and pixels as Bitmap</p>
+     * 
+     * @param bmp exists Bitmap instance
+     * @return Bitmap instance, builded from given Bitmap
+     */
     public static BufferedImage toAWT(Bitmap bmp) {
         BufferedImage img = new BufferedImage(bmp.getWidth(), bmp.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for(int x = 0; x < bmp.getWidth(); x++) {
