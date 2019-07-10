@@ -3,8 +3,21 @@ package org.kllbff.magic.graphics.color;
 import org.kllbff.magic.exceptions.IncorrectColorException;
 import org.kllbff.magic.math.VarargsMath;
 
+/**
+ * <h3>A helper class that allows color convertings between deifferent color spaces</h3>
+ * <p>At this moment does not supported only CMYK space</p>
+ * 
+ * @author Kirill Bogatikov
+ * @version 1.0
+ * @since 1.0
+ */
 public final class ColorsConverter {
-    
+    /**
+     * Returns color, converted to sRGB from given color
+     * 
+     * @param color long number color, in any supported color space
+     * @return color, converted to sRGB from given color
+     */
     public static long toRGB(long color) {
         ColorSpace colorSpace = Color.colorSpace(color);
 
@@ -17,6 +30,13 @@ public final class ColorsConverter {
         }
     }
     
+    /**
+     * Returns color, converted from sRGB to specified Color Space
+     * 
+     * @param color long number color, in sRGB color space
+     * @param target specified target {@link ColorSpace}
+     * @return color, converted from sRGB to specified color space
+     */
     public static long fromRGB(long color, ColorSpace target) {
         if(Color.colorSpace(color) != ColorSpace.sRGB) {
             throw new IncorrectColorException("Initial color must be in sRGB color space");
@@ -31,6 +51,12 @@ public final class ColorsConverter {
         }
     }
     
+    /**
+     * Returns color, converted from sRGB to XYZ color space
+     * 
+     * @param color long number color space, in sRGB color space
+     * @return long number color in XYZ color space
+     */
     public static long converRGBtoXYZ(long color) {
         if(Color.colorSpace(color) != ColorSpace.sRGB) {
             throw new IncorrectColorException("Given color does not in sRGB color space!");
@@ -61,6 +87,12 @@ public final class ColorsConverter {
         return c * 100.0;
     }
     
+    /**
+     * Returns color converted from XYZ to sRGB color space
+     * 
+     * @param color long number color, in XYZ color space
+     * @return long number color, in sRGB color space
+     */
     public static long convertXYZtoRGB(long color) {
         if(Color.colorSpace(color) != ColorSpace.XYZ) {
             throw new IncorrectColorException("Given color does not in XYZ color space!");
@@ -91,6 +123,12 @@ public final class ColorsConverter {
         return Math.min(255.0, Math.max(0.0, c)) * 255.0;
     }
     
+    /**
+     * Returns color converted from XYZ to CIE Lab color space
+     * 
+     * @param color long number color, in XYZ color space
+     * @return long number color, in CIE Lab color space
+     */
     public static long convertXYZtoCIELAB(long color) {
         if(Color.colorSpace(color) != ColorSpace.XYZ) {
             throw new IncorrectColorException("Given color does not in XYZ color space!");
@@ -115,7 +153,13 @@ public final class ColorsConverter {
         }
         return p;
     }
-    
+
+    /**
+     * Returns color converted from CIE Lab to XYZ color space
+     * 
+     * @param color long number color, in CIE Lab color space
+     * @return long number color, in XYZ color space
+     */
     public static long convertCIELABtoXYZ(long color) {
         if(Color.colorSpace(color) != ColorSpace.CIELAB) {
             throw new IncorrectColorException("Given color does not in CIELab color space!");
@@ -136,14 +180,34 @@ public final class ColorsConverter {
         return Math.pow(p, 3) > 0.008856 ? Math.pow(p, 3) : (p - 16.0 / 116.0) / 7.787;
     }
     
+    /**
+     * Returns color converted from sRGB to CIE Lab color space
+     * <p>It can not convert RGB to CIE Lab directly, therefore this method uses conversion sRGB to XYZ, and XYZ to CIE Lab then</p>
+     * 
+     * @param color long number color, in sRGB color space
+     * @return long number color, in CIE Lab color space
+     */
     public static long convertRGBtoCIELAB(long color) {
         return convertXYZtoCIELAB(converRGBtoXYZ(color));
     }
-    
+
+    /**
+     * Returns color converted from CIE Lab to sRGB color space
+     * <p>It can not convert CIE Lab to RGB directly, therefore this method uses conversion CIE Lab to XYZ, and XYZ to sRGB then</p>
+     * 
+     * @param color long number color, in CIE Lab color space
+     * @return long number color, in sRGB color space
+     */
     public static long convertCIELABtoRGB(long color) {
         return convertXYZtoRGB(convertCIELABtoXYZ(color));
     }
     
+    /**
+     * Returns color converted from sRGB to HSB color space
+     * 
+     * @param color long number color, in sRGB color space
+     * @return long number color, in HSB color space
+     */
     public static long convertRGBtoHSB(long color) {
         if(Color.colorSpace(color) != ColorSpace.sRGB) {
             throw new IncorrectColorException("Given color does not in sRGB color space!");
@@ -178,7 +242,13 @@ public final class ColorsConverter {
         
         return Color.hsb((int)hue, (int)saturation, (int)brightness, Color.alpha(color));
     }
-    
+
+    /**
+     * Returns color converted from HSB to sRGB color space
+     * 
+     * @param color long number color, in HSB color space
+     * @return long number color, in sRGB color space
+     */
     public static long convertHSBtoRGB(long color) {
         double hue = Color.hue(color) / 360.0;
         double saturation = Color.saturation(color) / 100.0;
