@@ -4,12 +4,12 @@ import org.kllbff.magic.exceptions.NotEnoughMemoryException;
 
 /**
  * <h3>A helper class that allows you to more safely allocate memory to accommodate data</h3>
- * The main difference between the default Java allocation and this allocation is that attempts
- * to allocate memory by standard means lead to filling of free memory and at its shortage, 
- * {@link OutOfMemoryError} emission at which the application is forced to shut down. <br />
- * In the case of using this class, free memory is not filled, first checked for free memory and 
- * if it is not enough, there is a release NotEnoughMemoryException, processing that, the application
- * can continue it's work.
+ *     The main difference between the default Java allocation and this allocation is that attempts
+ *     to allocate memory by standard means lead to filling of free memory and at its shortage, 
+ *     {@link OutOfMemoryError} emission at which the application is forced to shut down. <br />
+ *     In the case of using this class, free memory is not filled, first checked for free memory and 
+ *     if it is not enough, there is a release NotEnoughMemoryException, processing that, the application
+ *     can continue it's work.
  * 
  * @author Kirill Bogatikov
  * @version 1.1
