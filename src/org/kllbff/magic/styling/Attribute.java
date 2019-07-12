@@ -25,7 +25,7 @@ public class Attribute {
     }
     
     public boolean is(AttributeType some) {
-        return some.equals(type);
+        return some == null || some.equals(type);
     }
     
     public boolean is(String namespace, String name) {
@@ -35,5 +35,10 @@ public class Attribute {
     @SuppressWarnings("unchecked")
     public <T> T get() {
         return (T)value;
+    }
+    
+    public void set(Object object, AttributeType type) {
+        this.value = object;
+        this.type = type;
     }
 }

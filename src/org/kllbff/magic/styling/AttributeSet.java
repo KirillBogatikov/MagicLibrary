@@ -14,12 +14,20 @@ public class AttributeSet {
         this.filter = filter;
     }
     
-    public <T> T get(String namespace, String name) {
+    public Attribute get(String name) {
         for(Attribute attr : attributes) {
-            if(attr.is(filter) && attr.is(namespace, name)) {
-                return attr.get();
+            if(attr.is(filter) && attr.is("", name)) {
+                return attr;
             }
         }
         return null;
+    }
+    
+    public <T> T getValue(String name) {
+        Attribute attr = get(name);
+        if(attr == null) {
+            return null;
+        }
+        return attr.get();
     }
 }
