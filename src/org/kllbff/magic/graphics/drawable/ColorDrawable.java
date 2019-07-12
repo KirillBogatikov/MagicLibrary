@@ -2,6 +2,7 @@ package org.kllbff.magic.graphics.drawable;
 
 import org.kllbff.magic.graphics.Canvas;
 import org.kllbff.magic.graphics.Paint;
+import org.kllbff.magic.graphics.color.Color;
 
 public class ColorDrawable implements Drawable {
     private Paint myPaint;
@@ -9,6 +10,10 @@ public class ColorDrawable implements Drawable {
     
     public ColorDrawable(long color) {
         this.myPaint = new Paint(color, Paint.FILL);
+    }
+    
+    public ColorDrawable() {
+        this(Color.WHITE);
     }
 
     @Override
