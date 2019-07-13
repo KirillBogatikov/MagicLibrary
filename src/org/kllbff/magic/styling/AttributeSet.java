@@ -10,6 +10,10 @@ public class AttributeSet {
         attributes = new ArrayList<>();
     }
     
+    public void add(Attribute attr) {
+        this.attributes.add(attr);
+    }
+    
     public void filter(AttributeType filter) {
         this.filter = filter;
     }
@@ -21,6 +25,10 @@ public class AttributeSet {
             }
         }
         return null;
+    }
+    
+    public boolean has(String name) {
+        return get(name) != null;
     }
     
     public <T> T getValue(String name) {
