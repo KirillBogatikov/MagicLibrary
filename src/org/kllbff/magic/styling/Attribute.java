@@ -6,10 +6,11 @@ public class Attribute {
     private Object value;
     private AttributeType type;
     
-    public Attribute(AttributeType type, String namespace, String name) {
+    public Attribute(AttributeType type, String namespace, String name, Object value) {
         this.type = type;
         this.namespace = namespace;
         this.name = name;
+        this.value = value;
     }
     
     public String getNamespace() {
