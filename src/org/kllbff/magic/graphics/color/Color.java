@@ -1,6 +1,7 @@
 package org.kllbff.magic.graphics.color;
 
 import static org.kllbff.magic.math.DigitsRounder.round;
+
 import org.kllbff.magic.exceptions.IncorrectColorException;
 
 /**
