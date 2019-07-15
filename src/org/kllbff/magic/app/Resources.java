@@ -1,11 +1,10 @@
 package org.kllbff.magic.app;
 
 import static org.kllbff.magic.styling.AttributeType.DIMENSION;
-import static org.kllbff.magic.styling.AttributeType.DRAWABLE;
 import static org.kllbff.magic.styling.AttributeType.STRING;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -22,19 +21,26 @@ import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
 import org.kllbff.magic.styling.StateList;
+import org.kllbff.magic.styling.Theme;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class Resources {
     private AttributeSet basicAttributes;
+    private Theme theme;
     private AttributeSet themeAliases;
     
-    public Resources(AttributeSet basic, AttributeSet aliases) throws XmlPullParserException {
+    public Resources(AttributeSet basic, Theme theme) throws XmlPullParserException {
         this.basicAttributes = basic;
-        this.themeAliases = aliases;
+        setTheme(theme);
     }
     
-    public void applyTheme(AttributeSet aliases) {
-        this.themeAliases = aliases;
+    public Theme getTheme() {
+        return theme;
+    }
+    
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+        this.themeAliases = theme.getAliases();
     }
     
     private void throwParsingException(String target, Attribute attr) throws ParsingException {
@@ -50,20 +56,17 @@ public class Resources {
     public Drawable getDrawable(String name) throws ResourceNotFoundException {
         name = name.replace("@drawable/", "");
         
-        if(!basicAttributes.has(name)) {
-            return getDrawable(themeAliases.getValue(name));
-        }
-
         checkResource("Drawable", name);
-        Attribute attr = basicAttributes.get(name);
-        switch(attr.getType()) {
-            case DRAWABLE: 
-                return attr.get();
-            case STRING: {
+        
+        Attribute alias = themeAliases.get(name);
+        String fileName = alias.get();
+        
+        switch(alias.getType()) {
+            case DRAWABLE: {
                 Drawable drawable;
-                String resPath = "res/drawable/" + attr.get();
+                String resPath = "drawable/" + fileName;
                 
-                try(InputStream input = new BufferedInputStream(new FileInputStream(resPath))) {
+                try(InputStream input = new BufferedInputStream(openResource(resPath))) {
                     if(resPath.endsWith(".xml")) {
                         XmlDrawableParser xmlDrawableParser = new XmlDrawableParser(this);
                         drawable = xmlDrawableParser.parseResource(new InputStreamReader(input));
@@ -77,7 +80,6 @@ public class Resources {
                         }
                         drawable = new BitmapDrawable(bitmap);
                     }
-                    attr.set(drawable, DRAWABLE);
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new ParsingException(e);
@@ -85,7 +87,7 @@ public class Resources {
                 return drawable;
             }
             default:
-                throwParsingException("drawable", attr);
+                throwParsingException("drawable", alias);
         }
         return null;
     }
@@ -127,7 +129,7 @@ public class Resources {
     }
     
     public String getString(String name) throws ResourceNotFoundException {
-        name = name.replace("@string/", "");
+        name = name.replace("@states/", "");
 
         if(!basicAttributes.has(name)) {
             return getString(themeAliases.getValue(name));
@@ -165,4 +167,14 @@ public class Resources {
         }
         return null;
     } 
+    
+    public static InputStream openRaw(String fileName) throws IOException {
+        return openResource("raw/" + fileName);
+    }
+    
+    public static InputStream openResource(String path) throws IOException {
+        return ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+        //System.out.println("--" + url);
+        //return url.openStream();
+    }
 }
