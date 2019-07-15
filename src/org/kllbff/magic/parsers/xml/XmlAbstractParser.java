@@ -15,7 +15,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-public abstract class AbstractXmlParser<E> extends AbstractParser<E> {
+public abstract class XmlAbstractParser<E> extends AbstractParser<E> {
     public static final XmlPullParserFactory factory;
     
     static {
@@ -28,7 +28,7 @@ public abstract class AbstractXmlParser<E> extends AbstractParser<E> {
     
     protected XmlPullParser xpp;
     
-    public AbstractXmlParser(Resources resources) throws XmlPullParserException {
+    public XmlAbstractParser(Resources resources) throws XmlPullParserException {
         super(resources);
         xpp = factory.newPullParser();
     }

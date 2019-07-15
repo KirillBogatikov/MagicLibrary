@@ -18,7 +18,7 @@ import org.kllbff.magic.interpolation.Interpolator;
 import org.kllbff.magic.interpolation.LinearInterpolator;
 import org.xmlpull.v1.XmlPullParserException;
 
-public class XmlDrawableParser extends AbstractXmlParser<Drawable> {
+public class XmlDrawableParser extends XmlAbstractParser<Drawable> {
 
     public XmlDrawableParser(Resources resources) throws XmlPullParserException {
         super(resources);
