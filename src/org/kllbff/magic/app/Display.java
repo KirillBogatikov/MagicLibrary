@@ -7,4 +7,6 @@ public abstract class Display {
     public abstract int getBitDepth();
     public abstract int getX();
     public abstract int getY();
+    public abstract int getDensity();
+    public abstract boolean isDefault();
 }
