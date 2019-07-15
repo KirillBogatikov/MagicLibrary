@@ -1,6 +1,8 @@
 package org.kllbff.magic.styling;
 
 public class Attribute {
+    public static final String MAGIC_ATTRIBUTES_NAMESPACE = "";
+    
     private String namespace;
     private String name;
     private Object value;
@@ -11,6 +13,10 @@ public class Attribute {
         this.namespace = namespace;
         this.name = name;
         this.value = value;
+    }
+    
+    public Attribute(AttributeType type, String name, Object value) {
+        this(type, MAGIC_ATTRIBUTES_NAMESPACE, name, value);
     }
     
     public String getNamespace() {
@@ -41,5 +47,10 @@ public class Attribute {
     public void set(Object object, AttributeType type) {
         this.value = object;
         this.type = type;
+    }
+    
+    @Override
+    public String toString() {
+        return type + " " + namespace + ":" + name + " = " + value;
     }
 }
