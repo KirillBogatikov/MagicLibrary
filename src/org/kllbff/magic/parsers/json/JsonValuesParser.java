@@ -44,6 +44,7 @@ public class JsonValuesParser extends JsonAbstractParser<AttributeSet> {
             }
             attributes.add(attr);
         }
+        
         return attributes;
     }
 
