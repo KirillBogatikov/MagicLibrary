@@ -14,9 +14,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class JsonStyleParser extends JsonAbstractParser<List<Theme>> {
+public class JsonStylesParser extends JsonAbstractParser<List<Theme>> {
     
-    public JsonStyleParser() {
+    public JsonStylesParser() {
         super(null);
         this.linksAllowed = false;
     }
