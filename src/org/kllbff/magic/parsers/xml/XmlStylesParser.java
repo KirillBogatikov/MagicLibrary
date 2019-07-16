@@ -61,9 +61,7 @@ public class XmlStylesParser extends XmlAbstractParser<List<Theme>> {
             throw new ParsingException("Values file must be started with <resources> tag");
         }
         
-        String tag;
-        while((tag = nextTag("resources")) != null) {
-            System.out.println(tag);
+        while(nextTag("resources") != null) {
             list.add(parseTheme());
         }
         

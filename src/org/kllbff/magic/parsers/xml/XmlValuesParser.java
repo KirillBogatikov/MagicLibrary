@@ -21,12 +21,12 @@ public class XmlValuesParser extends XmlAbstractParser<AttributeSet> {
     public AttributeSet parseResource(Reader reader) throws IOException, XmlPullParserException, ResourceNotFoundException {
         xpp.setInput(reader);
         
-        if(!nextTag("").equals("resources")) {
+        String tag = nextTag("");
+        if(!tag.equals("resources")) {
             throw new ParsingException("Values file must be started with <resources> tag");
         }
         
         AttributeSet attributes = new AttributeSet();
-        String tag;
         while((tag = nextTag("resources")) != null) {
             checkAttr("name", "resources item");
             
