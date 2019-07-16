@@ -4,9 +4,12 @@ import static org.kllbff.magic.styling.AttributeType.DIMENSION;
 import static org.kllbff.magic.styling.AttributeType.STRING;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
@@ -22,9 +25,12 @@ import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
 import org.kllbff.magic.styling.StateList;
 import org.kllbff.magic.styling.Theme;
+import org.kllbff.magic.utils.JarAccessProvider;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class Resources {
+    private static ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private static JarAccessProvider jarAccessProvider;
     private AttributeSet basicAttributes;
     private Theme theme;
     private AttributeSet themeAliases;
@@ -66,7 +72,7 @@ public class Resources {
                 Drawable drawable;
                 String resPath = "drawable/" + fileName;
                 
-                try(InputStream input = new BufferedInputStream(openResource(resPath))) {
+                try(InputStream input = new BufferedInputStream(openStream(resPath))) {
                     if(resPath.endsWith(".xml")) {
                         XmlDrawableParser xmlDrawableParser = new XmlDrawableParser(this);
                         drawable = xmlDrawableParser.parseResource(new InputStreamReader(input));
@@ -168,13 +174,30 @@ public class Resources {
         return null;
     } 
     
-    public static InputStream openRaw(String fileName) throws IOException {
-        return openResource("raw/" + fileName);
+    public static List<String> listFiles(String path) throws IOException {
+        try {
+            return getJarAccessProvider().listFiles(path);
+        } catch(IllegalStateException notInJar) {
+            List<String> list = new ArrayList<>();
+            for(File file : new File("res/" + path).listFiles()) {
+                list.add(file.getPath());
+            }
+            return list;
+        }
     }
     
-    public static InputStream openResource(String path) throws IOException {
-        return ClassLoader.getSystemClassLoader().getResourceAsStream(path);
-        //System.out.println("--" + url);
-        //return url.openStream();
+    public static InputStream openStream(String path) throws IOException {
+        try {
+            return getJarAccessProvider().openStream(path);
+        } catch(IllegalStateException notInJar) {
+            return classLoader.getResourceAsStream(path);
+        }
+    }
+    
+    public static JarAccessProvider getJarAccessProvider() throws IOException {
+        if(jarAccessProvider == null) {
+            jarAccessProvider = new JarAccessProvider(Resources.class.getPackage().getName());
+        }
+        return jarAccessProvider;
     }
 }
