@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.kllbff.magic.exceptions.ParsingException;
@@ -101,11 +102,11 @@ public class Resources {
     public long getColor(String name) throws ResourceNotFoundException {
         name = name.replace("@color/", "");
 
+        checkResource("Color", name);
+
         if(!basicAttributes.has(name)) {
             return getColor(themeAliases.getValue(name));
         }
-
-        checkResource("Color", name);
         
         Attribute attr = basicAttributes.get(name);
         switch(attr.getType()) {
@@ -120,11 +121,11 @@ public class Resources {
     public double getDimension(String name) throws ResourceNotFoundException {
         name = name.replace("@dimen/", "");
 
+        checkResource("Dimension", name);
+
         if(!basicAttributes.has(name)) {
             return getDimension(themeAliases.getValue(name));
         }
-
-        checkResource("Dimension", name);
         
         Attribute attr = basicAttributes.get(name);
         if(attr.is(DIMENSION)) {
@@ -137,11 +138,11 @@ public class Resources {
     public String getString(String name) throws ResourceNotFoundException {
         name = name.replace("@states/", "");
 
+        checkResource("String", name);
+
         if(!basicAttributes.has(name)) {
             return getString(themeAliases.getValue(name));
         }
-
-        checkResource("String", name);
         
         Attribute attr = basicAttributes.get(name);
         if(attr.is(STRING)) {
@@ -154,11 +155,11 @@ public class Resources {
     public StateList<?> getStateList(String name) throws ResourceNotFoundException {
         name = name.replaceAll("@(drawable|color)/", "");
 
+        checkResource("StateList", name);
+
         if(!basicAttributes.has(name)) {
             return getStateList(themeAliases.getValue(name));
         }
-
-        checkResource("StateList", name);
         
         Attribute attr = basicAttributes.get(name);
         switch(attr.getType()) {
@@ -179,7 +180,14 @@ public class Resources {
             return getJarAccessProvider().listFiles(path);
         } catch(IllegalStateException notInJar) {
             List<String> list = new ArrayList<>();
-            for(File file : new File("res/" + path).listFiles()) {
+            File dir = new File("res/" + path);
+            File[] children = dir.listFiles();
+            
+            if(children == null) {
+                return Collections.emptyList();
+            }
+            
+            for(File file : children) {
                 list.add(file.getPath());
             }
             return list;
@@ -190,7 +198,7 @@ public class Resources {
         try {
             return getJarAccessProvider().openStream(path);
         } catch(IllegalStateException notInJar) {
-            return classLoader.getResourceAsStream(path);
+            return classLoader.getResourceAsStream(path.replaceAll("res[/\\\\]", ""));
         }
     }
     
