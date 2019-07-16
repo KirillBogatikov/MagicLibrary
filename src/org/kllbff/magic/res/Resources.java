@@ -1,16 +1,12 @@
-package org.kllbff.magic.app;
+package org.kllbff.magic.res;
 
 import static org.kllbff.magic.styling.AttributeType.DIMENSION;
 import static org.kllbff.magic.styling.AttributeType.STRING;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
@@ -26,12 +22,9 @@ import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
 import org.kllbff.magic.styling.StateList;
 import org.kllbff.magic.styling.Theme;
-import org.kllbff.magic.utils.JarAccessProvider;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class Resources {
-    private static ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private static JarAccessProvider jarAccessProvider;
     private AttributeSet basicAttributes;
     private Theme theme;
     private AttributeSet themeAliases;
@@ -60,7 +53,8 @@ public class Resources {
         }
     }
     
-    public Drawable getDrawable(String name) throws ResourceNotFoundException {
+    @SuppressWarnings("resource")
+    public Drawable getDrawable(String name) throws ResourceNotFoundException, IOException {
         name = name.replace("@drawable/", "");
         
         checkResource("Drawable", name);
@@ -73,7 +67,8 @@ public class Resources {
                 Drawable drawable;
                 String resPath = "drawable/" + fileName;
                 
-                try(InputStream input = new BufferedInputStream(openStream(resPath))) {
+                AccessProvider provider = AccessProvider.getInstance();
+                try(InputStream input = new BufferedInputStream(provider.openStream(resPath))) {
                     if(resPath.endsWith(".xml")) {
                         XmlDrawableParser xmlDrawableParser = new XmlDrawableParser(this);
                         drawable = xmlDrawableParser.parseResource(new InputStreamReader(input));
@@ -174,38 +169,4 @@ public class Resources {
         }
         return null;
     } 
-    
-    public static List<String> listFiles(String path) throws IOException {
-        try {
-            return getJarAccessProvider().listFiles(path);
-        } catch(IllegalStateException notInJar) {
-            List<String> list = new ArrayList<>();
-            File dir = new File("res/" + path);
-            File[] children = dir.listFiles();
-            
-            if(children == null) {
-                return Collections.emptyList();
-            }
-            
-            for(File file : children) {
-                list.add(file.getPath());
-            }
-            return list;
-        }
-    }
-    
-    public static InputStream openStream(String path) throws IOException {
-        try {
-            return getJarAccessProvider().openStream(path);
-        } catch(IllegalStateException notInJar) {
-            return classLoader.getResourceAsStream(path.replaceAll("res[/\\\\]", ""));
-        }
-    }
-    
-    public static JarAccessProvider getJarAccessProvider() throws IOException {
-        if(jarAccessProvider == null) {
-            jarAccessProvider = new JarAccessProvider(Resources.class.getPackage().getName());
-        }
-        return jarAccessProvider;
-    }
 }

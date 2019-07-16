@@ -1,4 +1,4 @@
-package org.kllbff.magic.app;
+package org.kllbff.magic.res;
 
 import java.io.Serializable;
 import java.util.HashMap;
