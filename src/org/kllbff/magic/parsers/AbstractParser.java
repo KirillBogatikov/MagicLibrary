@@ -1,14 +1,15 @@
 package org.kllbff.magic.parsers;
 
+import java.io.IOException;
 import java.io.Reader;
 
 import org.kllbff.magic.app.Display;
 import org.kllbff.magic.app.DisplayManager;
-import org.kllbff.magic.app.Resources;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.color.Color;
 import org.kllbff.magic.graphics.drawable.Drawable;
+import org.kllbff.magic.res.Resources;
 
 public abstract class AbstractParser<E> {
     protected boolean linksAllowed = true;
@@ -71,7 +72,7 @@ public abstract class AbstractParser<E> {
         return color;
     }
     
-    protected Drawable toDrawable(String text) throws ResourceNotFoundException {
+    protected Drawable toDrawable(String text) throws ResourceNotFoundException, IOException {
         if(!linksAllowed) {
             throw new ParsingException("Links does not allowed for drawable constants");
         }

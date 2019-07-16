@@ -7,10 +7,10 @@ import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.kllbff.magic.app.Resources;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.parsers.AbstractParser;
+import org.kllbff.magic.res.Resources;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

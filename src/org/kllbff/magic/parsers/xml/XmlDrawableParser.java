@@ -3,7 +3,6 @@ package org.kllbff.magic.parsers.xml;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.kllbff.magic.app.Resources;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.drawable.AnimationDrawable;
@@ -16,6 +15,7 @@ import org.kllbff.magic.graphics.drawable.RadialGradient;
 import org.kllbff.magic.interpolation.CosInterpolator;
 import org.kllbff.magic.interpolation.Interpolator;
 import org.kllbff.magic.interpolation.LinearInterpolator;
+import org.kllbff.magic.res.Resources;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class XmlDrawableParser extends XmlAbstractParser<Drawable> {
