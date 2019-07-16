@@ -57,4 +57,14 @@ public class AttributeSet implements Iterable<Attribute> {
             
         };
     }
+    
+    public void join(AttributeSet other) {
+        for(Attribute attr : other) {
+            if(!attributes.contains(attr)) {
+                attributes.add(attr);
+            } else {
+                throw new UnsupportedOperationException("Duplication attribute " + attr);
+            }
+        }
+    }
 }
