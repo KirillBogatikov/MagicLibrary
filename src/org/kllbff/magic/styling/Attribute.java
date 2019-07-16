@@ -49,6 +49,15 @@ public class Attribute {
         this.type = type;
     }
     
+    public boolean equals(Object other) {
+        try {
+            Attribute attr = (Attribute)other;
+            return (attr.type == type) && (attr.name.equals(name)) && (attr.namespace.equals(namespace));
+        } catch(ClassCastException e) {
+            return false;
+        }
+    }
+    
     @Override
     public String toString() {
         return type + " " + namespace + ":" + name + " = " + value;
