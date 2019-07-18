@@ -1,14 +1,13 @@
 package org.kllbff.magic.parsers.xml;
 
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
-import static org.xmlpull.v1.XmlPullParser.START_TAG;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 import java.io.IOException;
 import java.io.Reader;
 
 import org.kllbff.magic.exceptions.ParsingException;
-import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.parsers.AbstractParser;
 import org.kllbff.magic.res.Resources;
 import org.xmlpull.v1.XmlPullParser;
@@ -62,6 +61,6 @@ public abstract class XmlAbstractParser<E> extends AbstractParser<E> {
     }
 
     @Override
-    public abstract E parseResource(Reader reader) throws IOException, XmlPullParserException, ResourceNotFoundException;
+    public abstract E parseResource(Reader reader) throws IOException, XmlPullParserException;
 
 }

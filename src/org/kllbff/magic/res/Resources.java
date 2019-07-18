@@ -19,8 +19,6 @@ import org.kllbff.magic.parsers.json.JsonDrawableParser;
 import org.kllbff.magic.parsers.xml.XmlDrawableParser;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
-import org.kllbff.magic.styling.AttributeType;
-import org.kllbff.magic.styling.StateList;
 import org.kllbff.magic.styling.Theme;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -47,14 +45,14 @@ public class Resources {
         throw new ParsingException("Failed to get " + target + " from attribute '" + attr.getName() + "': type '" + attr.getType() + "' is incompatible ");
     }
     
-    private void checkResource(String target, String name) throws ResourceNotFoundException {
+    private void checkResource(String target, String name)  {
         if(!basicAttributes.has(name) && !themeAliases.has(name)) {
             throw new ResourceNotFoundException(target + " '" + name + "' not found");
         }
     }
     
     @SuppressWarnings("resource")
-    public Drawable getDrawable(String name) throws ResourceNotFoundException, IOException {
+    public Drawable getDrawable(String name) throws IOException {
         name = name.replace("@drawable/", "");
         
         checkResource("Drawable", name);
@@ -94,7 +92,7 @@ public class Resources {
         return null;
     }
     
-    public long getColor(String name) throws ResourceNotFoundException {
+    public long getColor(String name) {
         name = name.replace("@color/", "");
 
         checkResource("Color", name);
@@ -113,7 +111,7 @@ public class Resources {
         return 0L;
     }
     
-    public double getDimension(String name) throws ResourceNotFoundException {
+    public double getDimension(String name) {
         name = name.replace("@dimen/", "");
 
         checkResource("Dimension", name);
@@ -130,7 +128,7 @@ public class Resources {
         return 0L;
     }
     
-    public String getString(String name) throws ResourceNotFoundException {
+    public String getString(String name) {
         name = name.replace("@states/", "");
 
         checkResource("String", name);
@@ -147,6 +145,7 @@ public class Resources {
         return null;
     }
     
+    /*
     public StateList<?> getStateList(String name) throws ResourceNotFoundException {
         name = name.replaceAll("@(drawable|color)/", "");
 
@@ -168,5 +167,5 @@ public class Resources {
                 throwParsingException("state list", attr);
         }
         return null;
-    } 
+    } */
 }

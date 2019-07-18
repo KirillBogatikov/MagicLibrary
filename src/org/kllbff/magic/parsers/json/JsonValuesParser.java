@@ -2,7 +2,6 @@ package org.kllbff.magic.parsers.json;
 
 import java.io.Reader;
 
-import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
@@ -19,7 +18,7 @@ public class JsonValuesParser extends JsonAbstractParser<AttributeSet> {
     }
 
     @Override
-    public AttributeSet parseResource(Reader reader) throws ResourceNotFoundException {
+    public AttributeSet parseResource(Reader reader) {
         AttributeSet attributes = new AttributeSet();
         JsonArray array = jp.parse(reader).getAsJsonArray();
         

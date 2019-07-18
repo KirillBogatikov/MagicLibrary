@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.kllbff.magic.exceptions.ParsingException;
-import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
@@ -18,7 +17,7 @@ public class XmlValuesParser extends XmlAbstractParser<AttributeSet> {
     }
 
     @Override
-    public AttributeSet parseResource(Reader reader) throws IOException, XmlPullParserException, ResourceNotFoundException {
+    public AttributeSet parseResource(Reader reader) throws IOException, XmlPullParserException {
         xpp.setInput(reader);
         
         String tag = nextTag("");

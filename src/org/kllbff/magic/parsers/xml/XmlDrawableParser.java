@@ -72,7 +72,7 @@ public class XmlDrawableParser extends XmlAbstractParser<Drawable> {
         return group;
     }
     
-    private void parseChildDrawable(String tag, DrawableGroup root) throws XmlPullParserException, IOException, ResourceNotFoundException {
+    private void parseChildDrawable(String tag, DrawableGroup root) throws XmlPullParserException, IOException {
         switch(tag) {
             case "frame": {
                 if(!(root instanceof AnimationDrawable)) {
@@ -125,7 +125,7 @@ public class XmlDrawableParser extends XmlAbstractParser<Drawable> {
     }
 
     @Override
-    public Drawable parseResource(Reader reader) throws IOException, XmlPullParserException, ResourceNotFoundException {
+    public Drawable parseResource(Reader reader) throws IOException, XmlPullParserException {
         xpp.setInput(reader);
         String tag = nextTag(null);
         if(tag == null) {

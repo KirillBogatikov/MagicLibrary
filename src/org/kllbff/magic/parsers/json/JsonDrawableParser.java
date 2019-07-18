@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.kllbff.magic.exceptions.ParsingException;
-import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.drawable.AnimationDrawable;
 import org.kllbff.magic.graphics.drawable.ColorDrawable;
 import org.kllbff.magic.graphics.drawable.Drawable;
@@ -26,7 +25,7 @@ public class JsonDrawableParser extends JsonAbstractParser<Drawable> {
         super(resources);
     }
     
-    private Drawable parseDrawable(JsonObject object) throws ResourceNotFoundException, IOException {
+    private Drawable parseDrawable(JsonObject object) throws IOException {
         String clazz = object.get("class").getAsString();
         switch(clazz) {
             case "animation-drawable": {
@@ -89,7 +88,7 @@ public class JsonDrawableParser extends JsonAbstractParser<Drawable> {
         }
     }
     
-    private Drawable parseChild(JsonObject object) throws ResourceNotFoundException, IOException {
+    private Drawable parseChild(JsonObject object) throws IOException {
         checkProp(object, "duration", "frame of animation drawable");
 
         String key = getProp(object, "drawable", null);
@@ -104,7 +103,7 @@ public class JsonDrawableParser extends JsonAbstractParser<Drawable> {
     }
 
     @Override
-    public Drawable parseResource(Reader reader) throws ResourceNotFoundException, IOException {
+    public Drawable parseResource(Reader reader) throws IOException {
         JsonArray root = jp.parse(reader).getAsJsonArray();
         
         if(root.size() != 1) {
