@@ -28,6 +28,10 @@ public class Paint {
         this.type = type;
     }
     
+    public int getType() {
+        return type;
+    }
+    
     public boolean canFill() {
         return (type & 2) == 2;
     }
