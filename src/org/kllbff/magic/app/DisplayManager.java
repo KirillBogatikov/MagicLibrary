@@ -20,11 +20,11 @@ public class DisplayManager {
     
     private List<Display> cachedDisplaysList;
     private Display cachedDefaultDisplay;
-    private Toolkit TOOLKIT;
+    private Toolkit toolkit;
     private GraphicsEnvironment environment;
     
     private DisplayManager() {
-        TOOLKIT = Toolkit.getDefaultToolkit();
+        toolkit = Toolkit.getDefaultToolkit();
         environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
     }
 
@@ -45,10 +45,7 @@ public class DisplayManager {
             }
             
             GraphicsDevice screen = devices[i];
-            DisplayMode displayMode = screen.getDisplayMode();
-            Rectangle bounds = screen.getDefaultConfiguration().getBounds();
-            
-            Display display = createDisplay(displayMode, bounds, screen == defScreen);
+            Display display = createDisplay(screen, screen.equals(defScreen));
             displays.add(display);
             cachedDisplaysList.add(display);
             
@@ -66,9 +63,27 @@ public class DisplayManager {
         return cachedDefaultDisplay;
     }
     
-    private Display createDisplay(DisplayMode displayMode, Rectangle bounds, boolean isDefault) {
+    public Display getDisplay(int x, int y) {
+        if(cachedDisplaysList == null) {
+            getDisplays();
+        }
+        
+        for(Display display : cachedDisplaysList) {
+            if(display.getX() <= x && (display.getX() + display.getWidth()) >= x) {
+                if(display.getY() <= y && (display.getY() + display.getHeight()) >= y) {
+                    return display;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    private Display createDisplay(GraphicsDevice screen, boolean isDefault) {
+        DisplayMode displayMode = screen.getDisplayMode();
+        Rectangle bounds = screen.getDefaultConfiguration().getBounds();
+        
         return new Display() {
-
             @Override
             public int getWidth() {
                 return displayMode.getWidth();
@@ -101,7 +116,7 @@ public class DisplayManager {
 
             @Override
             public int getDensity() {
-                return TOOLKIT.getScreenResolution();
+                return toolkit.getScreenResolution();
             }
 
             @Override
