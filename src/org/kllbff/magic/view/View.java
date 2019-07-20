@@ -65,7 +65,7 @@ public abstract class View {
     private boolean shown;
     private int visibility;
     
-    private ViewGroup parent;
+    private ViewParent parent;
 
     public View(Resources resources) {
         this.resources = resources;
@@ -312,7 +312,7 @@ public abstract class View {
     
     public abstract boolean isClickable();
     
-    public final ViewGroup getParent() {
+    public final ViewParent getParent() {
         return parent;
     }
     
@@ -339,7 +339,7 @@ public abstract class View {
     
     public abstract View getTooltipView();
     
-    public void onAttach(ViewGroup parent) {
+    public void onAttach(ViewParent parent) {
         this.parent = parent;
     }
     
