@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.kllbff.magic.graphics.Canvas;
 import org.kllbff.magic.res.Resources;
 
-public abstract class ViewGroup extends View {
+public abstract class ViewGroup extends View implements ViewParent {
 
     public ViewGroup(Resources resources) {
         super(resources);
