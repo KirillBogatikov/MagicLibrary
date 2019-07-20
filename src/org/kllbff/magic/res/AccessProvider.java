@@ -77,6 +77,14 @@ public class AccessProvider implements AutoCloseable {
         
         return files;
     }
+    
+    public boolean exists(String name) {
+        if(currentJar == null) {
+            return new File("res/" + name).exists();
+        }
+        ZipEntry file = currentJar.getEntry(name);
+        return file != null;
+    }
 
     public InputStream openStream(String name) throws IOException {
         if(currentJar == null) {
