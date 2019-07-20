@@ -21,7 +21,7 @@ public class ThreadHandler<E> {
     
     private ArrayList<HandledItem> items;
     private ArrayList<HandledItem> delayedItems;
-    private Thread thread;
+    protected Thread thread;
     
     public ThreadHandler() {
         items = new ArrayList<>();
@@ -38,6 +38,7 @@ public class ThreadHandler<E> {
             }
             if(items.size() > 0) {
                 items.get(0).runnable.run();
+                items.remove(0);
             }
         }
     }
@@ -76,6 +77,6 @@ public class ThreadHandler<E> {
     }
     
     protected void onMessageReceived(E message) {
-        System.out.println(message);
+        
     }
 }
