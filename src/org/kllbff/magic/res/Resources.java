@@ -29,7 +29,9 @@ public class Resources {
     
     public Resources(AttributeSet basic, Theme theme) throws XmlPullParserException {
         this.basicAttributes = basic;
-        setTheme(theme);
+        if(theme != null) {
+            setTheme(theme);
+        }
     }
     
     public Theme getTheme() {
