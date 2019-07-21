@@ -2,6 +2,7 @@ package org.kllbff.magic.images;
 
 import java.util.Arrays;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.IncorrectColorException;
 import org.kllbff.magic.exceptions.NotEnoughMemoryException;
 import org.kllbff.magic.utils.MemoryAllocator;
@@ -29,6 +30,12 @@ public class Bitmap {
      * @param height height of image
      */
     protected Bitmap(long[] pixels, int width, int height) {
+        if(width * height < 4194304) {
+            Log.logger().i("Allocated plain bitmap image " + width + "x" + height);
+        } else {
+            Log.logger().w("Allocated very big bitmap image " + width + "x" + height);
+        }
+        
         this.pixels = pixels;
         this.width = width;
         this.height = height;
