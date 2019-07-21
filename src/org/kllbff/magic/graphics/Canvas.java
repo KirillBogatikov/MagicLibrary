@@ -20,20 +20,18 @@ import org.kllbff.magic.images.Bitmap;
 import org.kllbff.magic.images.BitmapFactory;
 
 public class Canvas {
-    //private BufferedImage image = null;
+    private BufferedImage image;
     private Graphics2D graphics = null;
     private Font font;
     private long textColor;
     private java.awt.Color fillColor, strokeColor, awtTextColor;
     private Paint paint;
     private Stroke stroke;
-    
-    public Canvas(Bitmap bitmap) {
-        this(bitmap.getWidth(), bitmap.getHeight());
-        //image = BitmapFactory.toAWT(bitmap);
-    }
+    private int width, height;
     
     public Canvas(Graphics2D awtGraphics, int width, int height) {
+        this.width = width;
+        this.height = height;
         this.graphics = awtGraphics;
         graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         setPaint(new Paint());
@@ -43,7 +41,23 @@ public class Canvas {
     }
     
     public Canvas(int width, int height) {
-        this((new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)).createGraphics(), width, height);
+        this.width = width;
+        this.height = height;
+        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        this.graphics = this.image.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        setPaint(new Paint());
+        setStroke(new SolidStroke(5));
+        setTextColor(Color.BLACK);
+        clearClip();
+    }
+    
+    public int getWidth() {
+        return width;
+    }
+    
+    public int getHeight() {
+        return height;
     }
     
     public void update() {
@@ -253,6 +267,17 @@ public class Canvas {
     
     public Graphics2D getGraphics() {
         return graphics;
+    }
+    
+    public Bitmap getBitmap() {
+        if(image == null) {
+            return null;
+        }
+        return BitmapFactory.fromAWT(image);
+    }
+    
+    public BufferedImage toAWT() {
+        return image;
     }
     
     private java.awt.Color toAWTColor(long color) {
