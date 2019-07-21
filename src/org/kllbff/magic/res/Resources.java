@@ -35,6 +35,10 @@ public class Resources {
         }
     }
     
+    public Resources(Resources resources, Theme theme) throws XmlPullParserException {
+        this(resources.basicAttributes, theme);
+    }
+    
     public Theme getTheme() {
         return theme;
     }
