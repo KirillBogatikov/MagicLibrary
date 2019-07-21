@@ -51,6 +51,10 @@ public class Canvas {
         setStroke(stroke);
     }
     
+    public void clearRectangle(int x, int y, int width, int height) {
+        graphics.clearRect(x, y, width, height);
+    }
+    
     public void setFont(Font font) {
         this.font = font;
         graphics.setFont(font.toAWT());
@@ -237,6 +241,14 @@ public class Canvas {
     public void drawBitmap(int x, int y, Bitmap bitmap) {
         BufferedImage image = BitmapFactory.toAWT(bitmap);
         graphics.drawImage(image, x, y, bitmap.getWidth(), bitmap.getHeight(), null);
+    }
+    
+    public void translate(int x, int y) {
+        graphics.translate(x, y);
+    }
+    
+    public void rotate(double angle, int x, int y) {
+        graphics.rotate(angle, x, y);
     }
     
     public Graphics2D getGraphics() {
