@@ -2,111 +2,119 @@ package org.kllbff.magic.app;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.kllbff.magic.concurrency.GUIThread;
+import org.kllbff.magic.concurrency.ThreadHandler;
 import org.kllbff.magic.exceptions.UnknownResourceTypeException;
+import org.kllbff.magic.hardware.WindowManager;
 import org.kllbff.magic.info.ActivityInfo;
 import org.kllbff.magic.info.ApplicationInfo;
 import org.kllbff.magic.parsers.ParsersPool;
+import org.kllbff.magic.parsers.json.JsonLoggingParser;
 import org.kllbff.magic.parsers.json.JsonManifestParser;
 import org.kllbff.magic.parsers.json.JsonStylesParser;
 import org.kllbff.magic.parsers.json.JsonValuesParser;
+import org.kllbff.magic.parsers.xml.XmlLoggingParser;
 import org.kllbff.magic.parsers.xml.XmlManifestParser;
 import org.kllbff.magic.parsers.xml.XmlStylesParser;
 import org.kllbff.magic.parsers.xml.XmlValuesParser;
 import org.kllbff.magic.res.AccessProvider;
 import org.kllbff.magic.res.Resources;
+import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
+import org.kllbff.magic.styling.AttributeType;
 import org.kllbff.magic.styling.Theme;
 import org.xmlpull.v1.XmlPullParserException;
 
 public final class Application {
     public static Application currentApplication;
     
-    public static Application current() {
-        return currentApplication;
-    }
-
     public static final void main(String[] args) {
-        currentApplication = new Application();
-        while(currentApplication.handler == null) { }
-        
-        currentApplication.handler.post(() -> {
-            currentApplication.onStart();
-        });        
+        Log.logger().i("Application", "Starting application...");
+        currentApplication = new Application();   
     }
     
-    private Thread appThread;
-    private ThreadHandler<String> handler;
-    private AttributeSet basicAttributes;
-    private List<Theme> themesList;
+    private ApplicationInfo applicationInfo;
+    private List<Theme> loadedThemes;
     private Resources resources;
-    private ApplicationInfo info;
-    
+    private WindowManager windowManager;
+    private ThreadHandler<String> threadHandler;
     private Activity launcherActivityInstance;
 
     public Application() {
-        appThread = new Thread() {
-            public void run() {
-                setName("Magic application thread");
-                
-                handler = new ThreadHandler<String>() {
-                    @Override
-                    protected void onMessageReceived(String message) {
-                        if(message.equals("kill")) {
-                            Thread.yield();
-                            this.thread = null;
-                        }
-                    }
-                };
-                
-                boolean opened = false;
-                try(AccessProvider provider = AccessProvider.getInstance()) {
-                    opened = true;
-                            
-                    basicAttributes = loadAllAttributes(provider);
-                    themesList = loadAllThemes(provider);
-                    resources = new Resources(basicAttributes, null);
-                    info = loadManifest(provider);
+        Log.logger().i("Application", "Changing Thread settings...");
+        Thread.currentThread().setName("Magic application main thread");
+        
+        windowManager = WindowManager.getInstance();
+        Log.logger().i("Application", "WindowManager created");
+        
+        boolean opened = false;
+        Log.logger().i("Application", "Loading resources");
+        try(AccessProvider provider = AccessProvider.getInstance()) {
+            Log.logger().i("Application", "AccessProvider instantiated");
+            opened = true;
+            
+            Map<String, PrintStream> config = Collections.emptyMap();
+            if(provider.exists("logging.json")) {
+                JsonLoggingParser jlp = new JsonLoggingParser();
+                config = jlp.parseResource(new InputStreamReader(provider.openStream("logging.json")));
+            } else if(provider.exists("logging.xml")) {
+                XmlLoggingParser xlp = new XmlLoggingParser();
+                config = xlp.parseResource(new InputStreamReader(provider.openStream("logging.xml")));
+            } 
+            Log.logger().i("Application", "Logging configuration loaded");
+            Log.logger().configurate(config);
                     
-                    for(Theme theme : themesList) {
-                        if(theme.getName().equals(info.getThemeName())) {
-                            resources.setTheme(theme);
-                            break;
-                        }
-                    }
-                    
-                } catch(IOException ioe) {
-                    if(opened) {
-                        System.err.println("Failed to open stream for resource. Caused by ");
-                    } else {
-                        System.err.println("Failed to open AccessProvder to resources. Caused by ");
-                    }
-                    ioe.printStackTrace();
-                    return;
-                } catch(XmlPullParserException e) {
-                    System.err.println("Failed to parse XML resource. Caused by ");
-                    e.printStackTrace();
-                    return;
-                } catch (Exception e) {
-                    System.err.println("Failed to parse resource. Caused by ");
-                    e.printStackTrace();
+            Log.logger().i("Application", "Loading all defined values");
+            AttributeSet basicAttributes = loadAllAttributes(provider);
+            basicAttributes.add(new Attribute(AttributeType.DIMENSION, "window.border.width", windowManager.getBorderWidth()));
+            basicAttributes.add(new Attribute(AttributeType.DIMENSION, "window.titlebar.height", windowManager.getTitleBarHeight()));
+
+            Log.logger().i("Application", "Loading all defined themes");
+            loadedThemes = loadAllThemes(provider);
+            Log.logger().i("Application", "Instantiating Resources class");
+            resources = new Resources(basicAttributes, null);
+            Log.logger().i("Application", "Loading application manifest");
+            applicationInfo = loadManifest(provider);
+                        
+            for(Theme theme : loadedThemes) {
+                if(theme.getName().equals(applicationInfo.getThemeName())) {
+                    Log.logger().i("Application", "App theme found. Applying aliases...");
+                    resources.setTheme(theme);
+                    break;
                 }
-                
-                handler.loop();
             }
-        };
-        appThread.start();
+        } catch(IOException ioe) {
+            if(opened) {
+                Log.logger().e("Application", "Failed to open stream for resource. Caused by ", ioe);
+            } else {
+                Log.logger().e("Application", "Failed to open AccessProvder to resources. Caused by ", ioe);
+            }
+            return;
+        } catch(XmlPullParserException e) {
+            Log.logger().e("Application", "Failed to parse XML resource. Caused by ", e);
+            return;
+        } catch (Exception e) {
+            Log.logger().e("Application", "Failed to parse resource. Caused by ", e);
+            return;
+        }
+        
+        onStart();
     }
-    
+
     private AttributeSet loadAllAttributes(AccessProvider provider) throws Exception {
         AttributeSet basicAttributes = new AttributeSet();
         
         ParsersPool<AttributeSet> pool = new ParsersPool<>(new JsonValuesParser(), new XmlValuesParser());
         for(String path : provider.listFiles("values/")) {
+            Log.logger().i("Application", "Opening next resource: " + path);
             try(Reader reader = new InputStreamReader(provider.openStream(path))) {
                 basicAttributes.join(pool.parseResource(reader, path));
             } catch(UnknownResourceTypeException e) {
@@ -123,6 +131,7 @@ public final class Application {
         
         ParsersPool<List<Theme>> pool = new ParsersPool<>(new JsonStylesParser(), new XmlStylesParser());
         for(String path : provider.listFiles("styles/")) {
+            Log.logger().i("Application", "Opening next resource: " + path);
             try(Reader reader = new InputStreamReader(provider.openStream(path))) {
                 themes.addAll(pool.parseResource(reader, path));
             } catch(UnknownResourceTypeException e) {
@@ -136,10 +145,12 @@ public final class Application {
     
     private ApplicationInfo loadManifest(AccessProvider provider) throws Exception {
         if(provider.exists("manifest.json")) {
+            Log.logger().i("Application", "Found JSON manifest");
             try(Reader reader = new InputStreamReader(provider.openStream("manifest.json"))) {
                 return new JsonManifestParser(resources).parseResource(reader);
             }
         } else if(provider.exists("manifest.xml")) {
+            Log.logger().i("Application", "Found XML manifest");
             try(Reader reader = new InputStreamReader(provider.openStream("manifest.xml"))) {
                 return new XmlManifestParser(resources).parseResource(reader);
             }
@@ -147,23 +158,33 @@ public final class Application {
         
         throw new Exception("Application manifest not found");
     }
-    
+
+    public ApplicationInfo getApplicationInfo() {
+        return applicationInfo;
+    }
+
+    public List<Theme> getLoadedThemes() {
+        return loadedThemes;
+    }
+
     public Resources getResources() {
         return resources;
     }
-    
-    public ApplicationInfo getInfo() {
-        return info;
+
+    public WindowManager getWindowManager() {
+        return windowManager;
     }
-    
-    public List<Theme> getThemes() {
-        return themesList;
+
+    public ThreadHandler<String> getThreadHandler() {
+        return threadHandler;
     }
     
     public void onStart() {
-        for(ActivityInfo activity : info.getActivities()) {
+        Log.logger().i("Application", "Application is ready, search for launcher activity");
+        for(ActivityInfo activity : applicationInfo.getActivities()) {
             if(activity.isLauncher()) {
-                String clazzName = info.getPackageName() + "." + activity.getClassName();
+                Log.logger().i("Application", "Launcher found, instantiating...");
+                String clazzName = applicationInfo.getPackageName() + "." + activity.getClassName();
                 try {
                     @SuppressWarnings("unchecked")
                     Class<? extends Activity> clazz = (Class<? extends Activity>)Class.forName(clazzName);
@@ -171,14 +192,14 @@ public final class Application {
                     launcherActivityInstance = constructor.newInstance(this, activity);
                     launcherActivityInstance.onStart();
                 } catch (ReflectiveOperationException e) {
-                    System.err.println("Failed to instantiate activity " + clazzName + ". Caused by: ");
-                    e.printStackTrace();
+                    Log.logger().e("Application", "Failed to instantiate activity " + clazzName + ". Caused by: ", e);
                 }
             }
         }
     }
     
     public void onStop() {
-        handler.postMessage("kill");
+        Log.logger().i("Application", "Stopping application, killing GUI thread");
+        GUIThread.getHandlerInstance().postMessage("kill");
     }
 }
