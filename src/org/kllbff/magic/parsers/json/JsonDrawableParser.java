@@ -3,6 +3,7 @@ package org.kllbff.magic.parsers.json;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.graphics.drawable.AnimationDrawable;
 import org.kllbff.magic.graphics.drawable.ColorDrawable;
@@ -104,6 +105,7 @@ public class JsonDrawableParser extends JsonAbstractParser<Drawable> {
 
     @Override
     public Drawable parseResource(Reader reader) throws IOException {
+        Log.logger().i("JsonDrawable", "Parsing drawable started");
         JsonArray root = jp.parse(reader).getAsJsonArray();
         
         if(root.size() != 1) {

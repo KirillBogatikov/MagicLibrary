@@ -3,6 +3,7 @@ package org.kllbff.magic.parsers.xml;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
@@ -18,6 +19,7 @@ public class XmlValuesParser extends XmlAbstractParser<AttributeSet> {
 
     @Override
     public AttributeSet parseResource(Reader reader) throws IOException, XmlPullParserException {
+        Log.logger().i("JsonValues", "Parsing resource started");
         xpp.setInput(reader);
         
         String tag = nextTag("");

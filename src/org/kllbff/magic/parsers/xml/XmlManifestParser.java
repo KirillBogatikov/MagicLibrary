@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.info.ActivityInfo;
 import org.kllbff.magic.info.ApplicationInfo;
@@ -19,6 +20,7 @@ public class XmlManifestParser extends XmlAbstractParser<ApplicationInfo> {
 
     @Override
     public ApplicationInfo parseResource(Reader reader) throws IOException, XmlPullParserException {
+        Log.logger().i("XmlManifest", "Parsing manifest started");
         xpp.setInput(reader);
         if(!nextTag(null).equals("application")) {
             throw new ParsingException("Application manifest must be started with <application> tag");

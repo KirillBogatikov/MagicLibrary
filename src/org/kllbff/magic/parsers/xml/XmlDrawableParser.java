@@ -3,6 +3,7 @@ package org.kllbff.magic.parsers.xml;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.drawable.AnimationDrawable;
@@ -126,6 +127,8 @@ public class XmlDrawableParser extends XmlAbstractParser<Drawable> {
 
     @Override
     public Drawable parseResource(Reader reader) throws IOException, XmlPullParserException {
+        Log.logger().i("XmlDrawable", "Parsing drawable started");
+        
         xpp.setInput(reader);
         String tag = nextTag(null);
         if(tag == null) {

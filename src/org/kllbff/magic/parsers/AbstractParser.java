@@ -3,12 +3,12 @@ package org.kllbff.magic.parsers;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.kllbff.magic.app.Display;
-import org.kllbff.magic.app.DisplayManager;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.color.Color;
 import org.kllbff.magic.graphics.drawable.Drawable;
+import org.kllbff.magic.hardware.Display;
+import org.kllbff.magic.hardware.DisplayManager;
 import org.kllbff.magic.res.Resources;
 
 public abstract class AbstractParser<E> {

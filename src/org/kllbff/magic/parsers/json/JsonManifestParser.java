@@ -2,6 +2,7 @@ package org.kllbff.magic.parsers.json;
 
 import java.io.Reader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.info.ActivityInfo;
 import org.kllbff.magic.info.ApplicationInfo;
@@ -18,6 +19,7 @@ public class JsonManifestParser extends JsonAbstractParser<ApplicationInfo> {
 
     @Override
     public ApplicationInfo parseResource(Reader reader) throws Exception {
+        Log.logger().i("JsonManifest", "Parsing manifest started");
         JsonObject manifest = jp.parse(reader).getAsJsonArray().get(0).getAsJsonObject();
         
         checkProp(manifest, "name", "application info");

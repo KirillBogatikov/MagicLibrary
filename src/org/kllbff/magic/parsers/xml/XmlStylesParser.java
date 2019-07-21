@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
@@ -54,6 +55,7 @@ public class XmlStylesParser extends XmlAbstractParser<List<Theme>> {
 
     @Override
     public List<Theme> parseResource(Reader reader) throws IOException, XmlPullParserException {
+        Log.logger().i("JsonThemes", "Parsing themes file started");
         xpp.setInput(reader);
         List<Theme> list = new ArrayList<>();
         

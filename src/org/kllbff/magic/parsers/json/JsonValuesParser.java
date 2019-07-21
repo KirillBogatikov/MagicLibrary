@@ -2,6 +2,7 @@ package org.kllbff.magic.parsers.json;
 
 import java.io.Reader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
 import org.kllbff.magic.styling.AttributeType;
@@ -19,6 +20,8 @@ public class JsonValuesParser extends JsonAbstractParser<AttributeSet> {
 
     @Override
     public AttributeSet parseResource(Reader reader) {
+        Log.logger().i("JsonValues", "Parsing resource started");
+        
         AttributeSet attributes = new AttributeSet();
         JsonArray array = jp.parse(reader).getAsJsonArray();
         

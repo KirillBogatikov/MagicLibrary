@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.styling.Attribute;
 import org.kllbff.magic.styling.AttributeSet;
@@ -60,6 +61,7 @@ public class JsonStylesParser extends JsonAbstractParser<List<Theme>> {
 
     @Override
     public List<Theme> parseResource(Reader reader) {
+        Log.logger().i("JsonThemes", "Parsing themes file started");
         List<Theme> themes = new ArrayList<Theme>();
         JsonArray array = jp.parse(reader).getAsJsonArray();
         
