@@ -3,13 +3,13 @@ package org.kllbff.magic.styling;
 import java.util.ArrayList;
 
 public class StateList<V> {
-    public static final int STATE_DISABLED  = 0x00;
-    public static final int STATE_ENABLED   = 0x01;
-    public static final int STATE_HOVERED   = 0x02;
-    public static final int STATE_FOCUSED   = 0x04;
-    public static final int STATE_SELECTED  = 0x08;
-    public static final int STATE_PRESSED   = 0x10;
-    public static final int STATE_CHECKED   = 0x20;
+    public static final int STATE_DISABLED  = 0b00000000000000000000000000000000;
+    public static final int STATE_ENABLED   = 0b00000000000000000000000000000001;
+    public static final int STATE_HOVERED   = 0b00000000000000000000000000000010;
+    public static final int STATE_FOCUSED   = 0b00000000000000000000000000000100;
+    public static final int STATE_SELECTED  = 0b00000000000000000000000000001000;
+    public static final int STATE_PRESSED   = 0b00000000000000000000000000010000;
+    public static final int STATE_CHECKED   = 0b00000000000000000000000000100000;
     
     public static final int MASK_DISABLED   = 0b11111111111111111111111111111110;
     public static final int MASK_UNHOVERED  = 0b11111111111111111111111111111101;
