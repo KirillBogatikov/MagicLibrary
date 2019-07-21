@@ -1,5 +1,7 @@
 package org.kllbff.magic.info;
 
+import org.kllbff.magic.app.Log;
+
 public class ApplicationInfo {
     private String name;
     private String description;
@@ -12,6 +14,8 @@ public class ApplicationInfo {
     public ApplicationInfo(String name, String description, String version, 
                            String versionCode, String packageName, String themeName,
                            ActivityInfo[] activities) {
+        Log.logger().i("ApplicationInfo", "Parser manifest: " + version + "(" + versionCode + "), " + packageName + ", " + themeName + ", " + activities.length + " activities");
+        
         this.name = name;
         this.description = description;
         this.version = version;
