@@ -5,22 +5,29 @@ import java.awt.Event;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import org.kllbff.magic.app.Activity;
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.event.KeyEvent;
 import org.kllbff.magic.event.MouseEvent;
 import org.kllbff.magic.graphics.Canvas;
+import org.kllbff.magic.graphics.drawable.Drawable;
 import org.kllbff.magic.hardware.Display;
+import org.kllbff.magic.hardware.WindowManager;
 
 public class Window extends View {
-    private Activity activity;
+    private WindowManager windowManager = WindowManager.getInstance();
     private Frame frame;
     private View contentView;
 
     public Window(Activity activity) {
-        super(activity.getResources());
-        this.activity = activity;
+        super(activity);
+        windowManager.register(this);
         
         this.frame = new Frame() {
             private static final long serialVersionUID = 4062787460280149527L;
@@ -35,9 +42,7 @@ public class Window extends View {
         
         frame.addMouseMotionListener(new MouseMotionListener() {
             @Override
-            public void mouseDragged(java.awt.event.MouseEvent e) {
-                //no drag'n'drop
-            }
+            public void mouseDragged(java.awt.event.MouseEvent e) {}
 
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
@@ -148,8 +153,62 @@ public class Window extends View {
             }
         });
         
-        frame.setUndecorated(true);
+        frame.setUndecorated(false);
         frame.setBackground(new java.awt.Color(0xFF, 0xFF, 0xFF, 0xFF));
+        frame.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                activity.onStop();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+                activity.onPause(null);   
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+                activity.onResume(null);
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+                
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+                
+            }
+        });
+        
+        frame.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                onResize(frame.getWidth(), frame.getHeight());
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                onLayout(frame.getX(), frame.getY());
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) { }
+
+            @Override
+            public void componentHidden(ComponentEvent e) { }
+        });
     }
     
     public Display getDisplay() {
@@ -191,29 +250,96 @@ public class Window extends View {
             contentView.draw(canvas);
         }
     }
-    
+
+    @Override
     public int getWidth() {
         return this.minWidth;
     }
-    
+
+    @Override
     public void setWidth(int width) {
         this.minWidth = width;
-        this.width = width - 32;
+        this.width = width - windowManager.getBorderWidth() * 2;
         frame.setSize(width, minHeight);
     }
-    
+
+    @Override
     public int getHeight() {
         return this.minHeight;
     }
-    
+
+    @Override
     public void setHeight(int height) {
         this.minHeight = height;
-        this.height = height - 32;
+        this.height = height - windowManager.getTitleBarHeight() - windowManager.getBorderWidth();
         frame.setSize(minWidth, height);
     }
     
     public void show() {
         frame.setVisible(true);
+    }
+    
+    public void dismiss() {
+        frame.dispose();
+    }
+    
+    public void setResizable(boolean resizable) {
+        frame.setResizable(resizable);
+    }
+    
+    public boolean isResizable() {
+        return frame.isResizable();
+    }
+    
+    public boolean isFullscreen() {
+        Window window = getDisplay().getFullscreenWindow();
+        if(window == null) {
+            return false;
+        }
+        
+        return window.equals(this);
+    }
+    
+    public boolean requestFullscreen() {
+        return getDisplay().setFullscreenWindow(this);
+    }
+    
+    public void unlockFullscreen() {
+        getDisplay().setFullscreenWindow(null);
+    }
+    
+    public String getTitle() {
+        return frame.getTitle();
+    }
+    
+    public void setTitle(String title) {
+        frame.setTitle(title);
+    }
+    
+    public boolean isFolded() {
+        return frame.getState() == Frame.ICONIFIED;
+    }
+    
+    public void fold() {
+        frame.setState(Frame.ICONIFIED);
+    }
+    
+    public void unfold() {
+        frame.setState(Frame.NORMAL);
+    }
+    
+    private Drawable icon;
+    
+    public Drawable getIcon() {
+        return icon;
+    }
+    
+    public void setIcon(Drawable icon) {
+        this.icon = icon;
+        Canvas canvas = new Canvas(48, 48);
+        icon.setBounds(0, 0, 48, 48);
+        icon.draw(canvas);
+        frame.setIconImage(canvas.toAWT());
     }
     
     @Override
@@ -234,5 +360,24 @@ public class Window extends View {
     @Override
     public View getTooltipView() {
         return null;
+    }
+    
+    @Override
+    public void onResize(int width, int height) {
+        Log.logger().i("Window", "Window resized to " + width + "x" + height);
+        this.minWidth = width;
+        this.minHeight = height;
+        this.width = width - windowManager.getBorderWidth() * 2;
+        this.height = height - windowManager.getTitleBarHeight() - windowManager.getBorderWidth();
+    }
+    
+    @Override
+    public void onLayout(int x, int y) {
+        Log.logger().i("Window", "Window located at (" + x + ", " + y + ")");
+        super.onLayout(x, y);
+    }
+    
+    public Frame toAWT() {
+        return frame;
     }
 }
