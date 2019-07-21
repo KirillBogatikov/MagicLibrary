@@ -2,13 +2,13 @@ package org.kllbff.magic.view;
 
 import java.util.Collection;
 
+import org.kllbff.magic.app.Activity;
 import org.kllbff.magic.graphics.Canvas;
-import org.kllbff.magic.res.Resources;
 
 public abstract class ViewGroup extends View implements ViewParent {
 
-    public ViewGroup(Resources resources) {
-        super(resources);
+    public ViewGroup(Activity activity) {
+        super(activity);
     }
     
     @SuppressWarnings("unchecked")

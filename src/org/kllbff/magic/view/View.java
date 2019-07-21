@@ -13,6 +13,7 @@ import static org.kllbff.magic.styling.StateList.STATE_SELECTED;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.kllbff.magic.app.Activity;
 import org.kllbff.magic.event.KeyEvent;
 import org.kllbff.magic.event.MouseEvent;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
@@ -43,6 +44,7 @@ public abstract class View {
         }
     }
     
+    protected Activity activity;
     protected Resources resources;
     private OnClickListener onClickListener;
     private OnHoverListener onHoverListener;
@@ -67,8 +69,9 @@ public abstract class View {
     
     private ViewParent parent;
 
-    public View(Resources resources) {
-        this.resources = resources;
+    public View(Activity activity) {
+        this.activity = activity;
+        this.resources = activity.getResources();
         padding = new int[4];
         margin = new int[4];
     }
@@ -423,5 +426,15 @@ public abstract class View {
             }
         }
         return false;
+    }
+    
+    public void onResize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    public void onLayout(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
