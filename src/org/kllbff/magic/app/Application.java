@@ -97,12 +97,15 @@ public final class Application {
             } else {
                 Log.logger().e("Application", "Failed to open AccessProvder to resources. Caused by ", ioe);
             }
+            onStop();
             return;
         } catch(XmlPullParserException e) {
             Log.logger().e("Application", "Failed to parse XML resource. Caused by ", e);
+            onStop();
             return;
         } catch (Exception e) {
             Log.logger().e("Application", "Failed to parse resource. Caused by ", e);
+            onStop();
             return;
         }
         
