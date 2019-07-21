@@ -38,7 +38,7 @@ public class WindowManager {
         Log.logger().i("WindowManager", "Wait for showing window and painting tester button");
         while(tester.getWidth() <= 0) { }
         Log.logger().i("WindowManager", "Sizes calcuated, disposing window and locked resources");
-        frame.setVisible(false);
+        frame.dispose();
         
         Dimension dimension = tester.getSize();
         borderWidth = Math.abs(100 - dimension.width) / 2;
@@ -61,5 +61,14 @@ public class WindowManager {
     public void unregister(Window window) {
         registeredWindows.remove(window);
         Log.logger().i("WindowManager", "Unregistered exists window. Now app has " + registeredWindows.size() + " windows");
+    }
+    
+    public Window fromAWT(java.awt.Window awt) {
+        for(Window win : registeredWindows) {
+            if(win.toAWT().equals(awt)) {
+                return win;
+            }
+        }
+        return null;
     }
 }
