@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.kllbff.magic.app.Log;
 import org.kllbff.magic.exceptions.ParsingException;
 import org.kllbff.magic.exceptions.ResourceNotFoundException;
 import org.kllbff.magic.graphics.drawable.BitmapDrawable;
@@ -64,6 +65,8 @@ public class Resources {
         
         switch(alias.getType()) {
             case DRAWABLE: {
+                Log.logger().i("Resources", "Drawable " + fileName + " is raw. Parsing starts now");
+                
                 Drawable drawable;
                 String resPath = "drawable/" + fileName;
                 
@@ -124,7 +127,8 @@ public class Resources {
         
         Attribute attr = basicAttributes.get(name);
         if(attr.is(DIMENSION)) {
-            return attr.get();
+            Number number = attr.get();
+            return number.doubleValue();
         }
         throwParsingException("dimension", attr);
         return 0L;
