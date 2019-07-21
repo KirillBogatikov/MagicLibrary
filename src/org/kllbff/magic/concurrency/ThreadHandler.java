@@ -1,4 +1,4 @@
-package org.kllbff.magic.app;
+package org.kllbff.magic.concurrency;
 
 import java.util.ArrayList;
 
