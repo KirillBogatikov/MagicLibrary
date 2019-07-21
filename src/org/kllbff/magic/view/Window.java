@@ -24,6 +24,7 @@ public class Window extends View {
     private WindowManager windowManager = WindowManager.getInstance();
     private Frame frame;
     private View contentView;
+    private Drawable icon;
 
     public Window(Activity activity) {
         super(activity);
@@ -328,8 +329,6 @@ public class Window extends View {
         frame.setState(Frame.NORMAL);
     }
     
-    private Drawable icon;
-    
     public Drawable getIcon() {
         return icon;
     }
@@ -340,6 +339,14 @@ public class Window extends View {
         icon.setBounds(0, 0, 48, 48);
         icon.draw(canvas);
         frame.setIconImage(canvas.toAWT());
+    }
+    
+    public void toFront() {
+        frame.toFront();
+    }
+    
+    public void toBack() {
+        frame.toBack();
     }
     
     @Override
