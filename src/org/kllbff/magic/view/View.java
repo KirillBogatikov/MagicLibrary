@@ -43,7 +43,7 @@ public abstract class View {
         }
     }
     
-    private Resources resources;
+    protected Resources resources;
     private OnClickListener onClickListener;
     private OnHoverListener onHoverListener;
     private OnDoubleClickListener onDoubleClickListener;
@@ -60,8 +60,8 @@ public abstract class View {
     
     private long id;
     private int x, y, z;
-    private int minWidth, minHeight;
-    private int width, height;
+    protected int minWidth, minHeight;
+    protected int width, height;
     private boolean shown;
     private int visibility;
     
@@ -203,11 +203,11 @@ public abstract class View {
         return minHeight;
     }
     
-    public final int getWidth() {
+    public int getWidth() {
         return width;
     }
     
-    public final int getHeight() {
+    public int getHeight() {
         return height;
     }
     
@@ -239,14 +239,17 @@ public abstract class View {
 
     public void setX(int x) {
         this.x = x;
+        redraw();
     }
 
     public void setY(int y) {
         this.y = y;
+        redraw();
     }
     
     public void setZ(int z) {
         this.z = z;
+        redraw();
     }
         
     public final boolean isAttached() {
@@ -318,11 +321,11 @@ public abstract class View {
     
     public void draw(Canvas canvas) {
         if(backgroundDrawable != null) {
-            backgroundDrawable.setBounds(x, y, width, height);
+            backgroundDrawable.setBounds(0, 0, width, height);
             backgroundDrawable.draw(canvas);
         } else if(backgroundDrawableList != null) {
             Drawable bg = backgroundDrawableList.getMostSimilar(state);
-            bg.setBounds(x, y, width, height);
+            bg.setBounds(0, 0, width, height);
             bg.draw(canvas);
         } else if(backgroundColorList != null) {
             long color = backgroundColorList.getMostSimilar(state);
@@ -331,7 +334,7 @@ public abstract class View {
             originPaint.setType(Paint.FILL);
             originPaint.setColor(color);
             
-            canvas.drawRectangle(x, y, width, height);
+            canvas.drawRectangle(0, 0, width, height);
         }
     }
 
@@ -357,12 +360,6 @@ public abstract class View {
     }
     
     public void onHoverStateChanged(boolean nowHovered) {
-        if(nowHovered) {
-            onStateChange(state | STATE_HOVERED);
-        } else {
-            onStateChange(state & MASK_UNHOVERED);
-        }
-        
         if(onHoverListener != null) {
             if(nowHovered) {
                 onHoverListener.onHoverStart(this);
@@ -370,38 +367,21 @@ public abstract class View {
                 onHoverListener.onHoverEnd(this);
             }
         }
+        
+        if(nowHovered) {
+            onStateChange(state | STATE_HOVERED);
+        } else {
+            onStateChange(state & MASK_UNHOVERED);
+        }
     }
     
     public static final int TYPE_DOWN = 0;
     public static final int TYPE_UP   = 1;
     public static final int TYPE_MOVE = 2;
     private long mouseDownTime, mouseUpTime;
-    private long lastMouseDownTime, lastMouseUpTime;
+    private long lastMouseDownTime, lastMouseUpTime = Long.MAX_VALUE;
     
     public void onMouseEvent(int type, MouseEvent event) {
-        switch(type) {
-            case TYPE_DOWN: 
-                mouseDownTime = System.currentTimeMillis();
-                onStateChange(state | STATE_PRESSED); 
-            break;
-            case TYPE_UP:
-                mouseUpTime = System.currentTimeMillis();
-                onStateChange(state | MASK_UNPRESSED); 
-            break;
-            case TYPE_MOVE:
-                if(event.getX() < getLeft() || event.getY() < getTop() ||
-                   event.getX() > getRight() || event.getY() > getBottom()) {
-                    if(isHovered()){
-                        onHoverStateChanged(false);
-                    }
-                    return;
-                }
-                if(!isHovered()) {
-                    onHoverStateChanged(true);
-                }
-            break;
-        }
-        
         if(mouseListener != null) {
             switch(type) {
                 case TYPE_DOWN: mouseListener.onKeyDown(this, event); break;
@@ -410,23 +390,38 @@ public abstract class View {
             }
         }
         
-        if(type == TYPE_UP) {
-            if(onDoubleClickListener != null && 
-               lastMouseUpTime - lastMouseDownTime < 50 &&
-               lastMouseUpTime - mouseUpTime < 50) {
-                onDoubleClickListener.onLongClick(this);
-                return;
-            }
-            if(onClickListener != null && mouseUpTime - mouseDownTime < 50) {
-                onClickListener.onClick(this, false);
-            }
+        switch(type) {
+            case TYPE_DOWN: 
+                mouseDownTime = System.currentTimeMillis();
+                onStateChange(state | STATE_PRESSED); 
+            break;
+            case TYPE_UP:
+                mouseUpTime = System.currentTimeMillis();
+                onStateChange(state & MASK_UNPRESSED); 
+                
+                if(onDoubleClickListener != null && 
+                    lastMouseUpTime - lastMouseDownTime < 175 &&
+                    mouseUpTime - lastMouseUpTime < 350) {
+                     onDoubleClickListener.onDoubleClick(this);
+                     return;
+                 }
+                 if(onClickListener != null && (mouseUpTime - mouseDownTime < 175)) {
+                     onClickListener.onClick(this, event);
+                 }
+                 
+                 lastMouseUpTime = mouseUpTime;
+                 lastMouseDownTime = mouseDownTime;
+            break;
         }
     }
     
-    public void onKeyEvent(int type, KeyEvent event) {
-        switch(type) {
-            case TYPE_UP:   keyListener.onKeyUp(this, event);   break;
-            case TYPE_DOWN: keyListener.onKeyDown(this, event); break;
+    public boolean onKeyEvent(int type, KeyEvent event) {
+        if(keyListener != null) {
+            switch(type) {
+                case TYPE_UP:   return keyListener.onKeyUp(this, event); 
+                case TYPE_DOWN: return keyListener.onKeyDown(this, event); 
+            }
         }
+        return false;
     }
 }
