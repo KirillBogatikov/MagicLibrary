@@ -1,10 +1,10 @@
 package org.kllbff.magic.event;
 
 public class InputEvent {
-    public static final int MASK_SIMPLE = 0x02,
-                            MASK_CTRL   = 0x04,
-                            MASK_ALT    = 0x08,
-                            MASK_SHIFT  = 0x10;
+    public static final int MASK_SIMPLE = 0x00,
+                            MASK_CTRL   = 0x02,
+                            MASK_ALT    = 0x04,
+                            MASK_SHIFT  = 0x08;
     
     protected int mask;
 
