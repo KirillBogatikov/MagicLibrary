@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kllbff.magic.app.Log;
+import org.kllbff.magic.view.Window;
 
 public class DisplayManager {
     private static DisplayManager currentInstance;
@@ -142,6 +143,21 @@ public class DisplayManager {
             @Override
             public int getToolbarHeight() {
                 return (int)(bounds.height - (center.getY() * 2));
+            }
+            
+            @Override
+            public Window getFullscreenWindow() {
+                java.awt.Window window = screen.getFullScreenWindow();
+                return WindowManager.getInstance().fromAWT(window);
+            }
+            
+            @Override
+            public boolean setFullscreenWindow(Window window) {
+                if(screen.isFullScreenSupported()) {
+                    screen.setFullScreenWindow(window == null ? null : window.toAWT());
+                    return true;
+                }
+                return false;
             }
         };
     }
