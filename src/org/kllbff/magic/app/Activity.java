@@ -1,31 +1,43 @@
 package org.kllbff.magic.app;
 
-import java.awt.Frame;
-import java.awt.Window;
-
+import org.kllbff.magic.concurrency.GUIThread;
+import org.kllbff.magic.concurrency.ThreadHandler;
+import org.kllbff.magic.hardware.DisplayManager;
+import org.kllbff.magic.hardware.WindowManager;
 import org.kllbff.magic.info.ActivityInfo;
 import org.kllbff.magic.res.Bundle;
 import org.kllbff.magic.res.Resources;
+import org.kllbff.magic.view.Window;
 
 public abstract class Activity {
     private Application application;
     private ActivityInfo info;
-    private Frame window;
+    private Window window;
 
     public Activity(Application application, ActivityInfo info) {
         this.application = application;
         this.info = info;
-        window = new Frame();
-        window.setBounds(150, 150, 150, 150);
-        window.setVisible(true);
+        window = new Window(this);
     }
     
     public Resources getResources() {
         return application.getResources();
     }
     
+    public WindowManager getWindowManager() {
+        return WindowManager.getInstance();
+    }
+    
+    public DisplayManager getDisplayManager() {
+        return DisplayManager.getInstance();
+    }
+    
+    public ThreadHandler<String> getGUIThreadHandler() {
+        return GUIThread.getHandlerInstance();
+    }
+    
     public void onStart() {
-        
+        window.show();
     }
     
     public void onResume(Bundle data) {
