@@ -50,5 +50,6 @@ public class GUIThread extends Thread {
         };
 
         handlerInstance.loop();
+        Log.logger().i("GUI", "GUI thread stoppped");
     }    
 }
