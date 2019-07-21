@@ -1,4 +1,4 @@
-package org.kllbff.magic.app;
+package org.kllbff.magic.hardware;
 
 public abstract class Display {
     public abstract int getWidth();
@@ -9,4 +9,6 @@ public abstract class Display {
     public abstract int getY();
     public abstract int getDensity();
     public abstract boolean isDefault();
+    public abstract int getToolbarWidth();
+    public abstract int getToolbarHeight();
 }
