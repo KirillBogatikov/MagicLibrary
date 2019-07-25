@@ -21,7 +21,7 @@ public class ThreadHandler<E> {
     
     private ArrayList<HandledItem> items;
     private ArrayList<HandledItem> delayedItems;
-    protected Thread thread;
+    protected volatile Thread thread;
     
     public ThreadHandler() {
         items = new ArrayList<>();
@@ -30,16 +30,22 @@ public class ThreadHandler<E> {
     }
     
     public void loop() {
-        while(thread != null) {
+        for(;;) {
             while(delayedItems.size() > 0 && delayedItems.get(0).canRun()) {
                 HandledItem item = delayedItems.get(0);
+                thread.setPriority(Thread.NORM_PRIORITY);
                 item.runnable.run();
                 delayedItems.remove(item);
             }
             if(items.size() > 0) {
+                thread.setPriority(Thread.NORM_PRIORITY);
                 items.get(0).runnable.run();
                 items.remove(0);
             }
+            if(thread == null) {
+                return;
+            }
+            thread.setPriority(Thread.MIN_PRIORITY);
         }
     }
     

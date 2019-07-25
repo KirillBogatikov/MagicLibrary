@@ -18,7 +18,6 @@ public class GUIThread extends Thread {
     }
     
     private GUIThread() {
-        
     }
 
     public void run() {
