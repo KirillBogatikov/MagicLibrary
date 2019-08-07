@@ -7,22 +7,10 @@
 	<name>Magic Library</name>
 	<repositories>
         <repository>
-            <id>kllbff-online</id>
+            <id>kllbff</id>
             <url>https://github.com/KirillBogatikov/MavenArtifacts/raw/master/releases</url>
         </repository>
     </repositories>
-    <distributionManagement>
-        <repository>
-            <id>kllbff-offline.releases</id>
-            <name>Releases</name>
-            <url>file:///D:/Work/Maven/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>kllbff-offline.snapshots</id>
-            <name>Snapshots</name>
-            <url>file:///D:/Work/Maven/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
